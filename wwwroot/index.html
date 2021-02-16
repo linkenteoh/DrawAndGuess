@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawlah - Homepage</title>
+    <link href="image/favicon.png" rel="shortcut icon">
+    <link href="css/app.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h2><a href="/">Drawlah</a></h2>
+        <h5 id="username"></h5>
+    </header>
+
+    <main>
+      <!--Overlay-->
+      <div id="log">
+        <div id="overlay"></div>
+        <div id="login">
+            <div id="welText">
+                <b>Welcome to<br> <p>Drawlah!</b></p>
+                <form>
+                    <input type="text" id="usernameInput" placeholder="Enter your username" autofocus>
+                    <button class="btn" value="Play Game">Play Game</button>
+                </form>
+            </div>
+        </div>
+      </div>
+
+      <!--Stats-->
+
+      <div id="head">
+          <div id="outer">
+              <div class="inner">
+                <p><b>Welcome to</b></p>
+                <h1 id="logo">Drawlah</h1>
+                <p><small>67 players currently online</small></p>
+            </div>
+          </div>
+      </div>
+
+      <!--Options-->
+
+      <div id="options">
+        <button class="btn">Quick Play</button>
+        <button class="btn">Create Room</button>
+      </div>
+
+      <!--Room lists-->
+      <div id="lists">
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>Public Rooms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="2">No game</td></tr>
+            </tbody>
+        </table>
+
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>Private Rooms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="2">No game</td></tr>
+            </tbody>
+        </table>
+
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>Full Rooms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="2">No game</td></tr>
+            </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script src="js/jquery.slim.js"></script>
+    <script src="js/signalr.js"></script>
+    <script>
+        const username = sessionStorage.getItem('username');
+
+        if(username != null){ //If session storage aldy having an username -- handles page reloading
+            $('#username').text(username);
+            $('#log').hide();
+        }
+
+        $('form').submit(e => {
+            e.preventDefault();
+
+            let name = $('#usernameInput').val().trim();
+
+            if(name)
+            {
+                sessionStorage.setItem('username', name);
+                $('#username').text(name);
+                $('#log').hide();
+            }
+            else
+            {
+                location = '/';
+                alert('Please enter your username!');
+            }
+        });
+    </script>
+    <!-- <script>
+        // ========================================================================================
+        // General
+        // ========================================================================================
+
+        const icon = sessionStorage.getItem('icon');
+        const name = sessionStorage.getItem('name');
+        if (!icon || !name) {
+            location = 'index.html';
+            throw 'ERROR: Invalid icon or name';
+        }
+
+        $('#you').text(icon + ' ' + name);
+
+        // ========================================================================================
+        // Events
+        // ========================================================================================
+
+        $('#create').click(async e => {
+            let gameId = await con.invoke('Create');
+            location = `game.html?gameId=${gameId}`;
+        });
+
+        $('tbody').on('click', '[data-join]', e => {
+            let gameId = $(e.target).data('join');
+            location = `game.html?gameId=${gameId}`;
+        });
+
+        // ========================================================================================
+        // Connect
+        // ========================================================================================
+
+        const param = $.param({ page: 'list' });
+
+        const con = new signalR.HubConnectionBuilder()
+            .withUrl('/hub?' + param)
+            .build();
+        
+        con.onclose(err => {
+            alert('Disconnected');
+            location = 'index.html';
+        });
+
+        // TODO
+        con.on('UpdateList', list => {
+            let html = '';
+
+            for (let game of list) {
+                html += `
+                    <tr>
+                        <td>${game.playerA.icon} ${game.playerA.name}</td>
+                        <td><button data-join="${game.id}">Join</button></td>
+                    </tr>
+                `;
+            }
+
+            if (list.length == 0) {
+                html = '<tr><td colspan="2">No game</td></tr>';
+            }
+
+            $('tbody').html(html);
+        });
+
+        con.start().then(main);
+
+        function main() {
+            $('#create').prop('disabled', false);
+        }
+
+    </script> -->
+</body>
+</html>

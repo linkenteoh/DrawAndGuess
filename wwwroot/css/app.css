@@ -1,0 +1,188 @@
+﻿/***** Font *****/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body, input, textarea, select, button {
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+}
+
+/***** Layout *****/
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background: rgb(117, 147, 247);
+    color: #fff;
+    padding: 10px 50px;
+    clear: both;
+}
+
+header h2 {
+    margin: 0;
+    padding-left: 40px;
+    background: url(../image/favicon.png) no-repeat left center / 32px 32px;
+    float: left;
+}
+
+header h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+header h5{
+    margin: 0;
+    float: right;
+    padding-top: 5px;
+}
+
+main {
+    padding: 20px 50px;
+    flex: 1 1 auto;
+    touch-action: none;
+    user-select: none;
+}
+
+#overlay {
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#login{
+    width: 100%;
+    padding: 20px 0px 20px 0px;
+    background-color: #3e13b6;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 1.5em;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+#welText{
+    text-align: center;
+}
+
+#welText p{
+    margin: 0;
+    font-size: 1.8em;
+    justify-content: center;
+    align-items: center;
+}
+
+#head{
+    display: flex;
+    justify-content: center;
+}
+
+#outer{
+    display: table;
+}
+
+.inner{
+    display:table-cell;
+    vertical-align:middle;
+    text-align:center;
+}
+
+#outer p{
+    font-weight: bolder;
+    font-size: 1.2em;
+    margin: 0px;
+}
+
+#options{
+    display: flex;
+    justify-content: center;
+}
+
+#options button{
+    margin: 6px;
+    margin-top: 15px;
+}
+
+#logo{
+    margin: 0px;
+    font-size: 62px;
+    letter-spacing:2px;
+    font-weight:bold;
+    background: -webkit-linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#lists{
+    display: flex;
+    justify-content: center ;
+}
+
+/***** Input *****/
+input[type=text] {
+    padding: .5em .6em;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+/***** General *****/
+.btn{
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor:pointer
+}
+
+.tbl{
+    margin: 10px;
+    width: 20%;
+    border-collapse: collapse;
+}
+
+.tbl th{
+    background-color: rgb(45, 75, 243);
+    color: white;
+    padding: 10px;
+    border: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.tbl td{
+    border:0px;
+    background-color: rgb(194, 206, 247);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 10px;
+}
+
+/***** Media Query *****/
+@media only screen and (max-width: 960px) {
+    main {
+        padding: 10px;
+    }
+
+    #lists {
+        display: block;
+    }
+
+    .tbl{
+        width: 95%;
+    }
+}
