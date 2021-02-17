@@ -21,3 +21,26 @@ C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGu
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\ref\DrawAndGuess.dll
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGuess.pdb
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGuess.genruntimeconfig.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\appsettings.json
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\DrawAndGuess.exe
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\DrawAndGuess.deps.json
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\DrawAndGuess.runtimeconfig.json
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\DrawAndGuess.runtimeconfig.dev.json
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\DrawAndGuess.dll
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\ref\DrawAndGuess.dll
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\bin\Debug\net5.0\DrawAndGuess.pdb
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.csprojAssemblyReference.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.AssemblyInfoInputs.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.AssemblyInfo.cs
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.csproj.CoreCompileInputs.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\staticwebassets\DrawAndGuess.StaticWebAssets.Manifest.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\staticwebassets\DrawAndGuess.StaticWebAssets.xml
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\scopedcss\bundle\DrawAndGuess.styles.css
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.RazorTargetAssemblyInfo.cache
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.dll
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\ref\DrawAndGuess.dll
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.pdb
+C:\Users\lamch\OneDrive\Desktop\Draw&Guess\obj\Debug\net5.0\DrawAndGuess.genruntimeconfig.cache
