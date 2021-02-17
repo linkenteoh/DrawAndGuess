@@ -15,7 +15,7 @@ body {
 }
 
 header {
-    background: rgb(117, 147, 247);
+    background:blue;
     color: #fff;
     padding: 10px 50px;
     clear: both;
@@ -63,7 +63,7 @@ main {
     padding: 20px 0px 20px 0px;
     background-color: #3e13b6;
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     font-size: 1.5em;
     color: white;
@@ -128,12 +128,71 @@ main {
     justify-content: center ;
 }
 
+#RoomForm{
+    padding-top: 12px;
+}
+
+#RoomForm .btn{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#RoomForm input[type=text], input[type=password], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+/**** Game.html ****/
+.canvas-header{
+    margin: 0px;
+    padding: 2px 16px;
+    background-color: blue;
+    color: white;
+}
+
+.canvas-header h2{
+    margin: 10px 0px;
+}
+
+.canvas-body{
+    
+}
+
+.sidebar-header{
+    margin: 0px auto;
+    padding: 2px 16px;
+    background-color: rgb(0, 0, 148);
+    color:white;
+}
+
+.sidebar-header p{
+    margin: 10px 0px;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.sidebar-body ul{
+    padding: 0px;
+    margin: 0px;
+}
+
+.sidebar-body ul li{
+    list-style: none;
+}
+
 /***** Input *****/
 input[type=text] {
     padding: .5em .6em;
     box-sizing: border-box;
     border-radius: 4px;
 }
+
+
 
 /***** General *****/
 .btn{
@@ -147,6 +206,24 @@ input[type=text] {
     font-size: 16px;
     border-radius: 4px;
     cursor:pointer
+}
+
+.btn-join{
+    background-color: #90c9f8;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor:pointer
+}
+
+.btn:disabled{
+    opacity: 0.9;
+    cursor:not-allowed;
 }
 
 .tbl{
@@ -172,6 +249,81 @@ input[type=text] {
     padding: 10px;
 }
 
+
+
+
+/*** Modal ***/
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 25%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+  
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+  }
+  
+  /* The Close Button */
+  .close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .modal-header {
+    padding: 2px 16px;
+    background-color: blue;
+    color: white;
+  }
+  
+  .modal-body {padding: 2px 16px;}
+  
+  .modal-footer {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+  }
+
 /***** Media Query *****/
 @media only screen and (max-width: 960px) {
     main {
@@ -185,4 +337,9 @@ input[type=text] {
     .tbl{
         width: 95%;
     }
+
+    .modal-content {
+        width: 80%;
+    }
+    
 }

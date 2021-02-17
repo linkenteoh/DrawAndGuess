@@ -35,7 +35,7 @@
               <div class="inner">
                 <p><b>Welcome to</b></p>
                 <h1 id="logo">Drawlah</h1>
-                <p><small>67 players currently online</small></p>
+                <p><small><span id="count">0</span> players currently online</small></p>
             </div>
           </div>
       </div>
@@ -43,9 +43,73 @@
       <!--Options-->
 
       <div id="options">
-        <button class="btn">Quick Play</button>
-        <button class="btn">Create Room</button>
+        <button id="quickPlay" disabled class="btn">Quick Play</button>
+        <button id="createRoom" disabled class="btn">Create Room</button>
       </div>
+
+      <!--Modal-->
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+       <div class="modal-content">
+           <div class="modal-header">
+               <span class="close">&times;</span>
+               <h2>Create Room</h2>
+           </div>
+
+           <div class="modal-body">
+            <form id="RoomForm">
+                <label for="roomName"><strong>Room Name</strong></label>
+                <input type="text" id="roomName" placeholder="Room Name..">
+            
+            
+                <label for="roomType"><strong>Room Type</strong></label>
+                <select id="roomType" name="roomType">
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+
+                <div id="hiddenPass" hidden>
+                <label for="roomPass"><strong>Room Password</strong></label>
+                <input type="password" id="roomPass" placeholder="Room Password..">
+                </div>
+
+                <label for="noPlayers"><strong>No of Players</strong></label>
+                <select id="noPlayers" name="noPlayers">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                
+                <button class="btn" id="roomBtn" style="width: 100%;"><b>Start Playing!</b></button>
+            </form>
+           </div>
+        </div>
+      </div>
+
+      <!-- Password modal-->
+
+      <div id="passModal" class="modal">
+
+        <!-- Modal content -->
+       <div class="modal-content">
+           <div class="modal-header">
+               <span id="passClose" class="close">&times;</span>
+               <h2>Private Room</h2>
+           </div>
+
+           <div class="modal-body">
+            <form id="RoomForm">
+                <input type="password" id="passInput" placeholder="Please enter the password to join">
+                
+                <button class="btn" id="joinPrivRoom" style="width: 100%;"><b>Join</b></button>
+            </form>
+           </div>
+        </div>
+      </div>
+  
 
       <!--Room lists-->
       <div id="lists">
@@ -55,7 +119,7 @@
                     <th>Public Rooms</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="publicRoom">
                 <tr><td colspan="2">No game</td></tr>
             </tbody>
         </table>
@@ -66,7 +130,7 @@
                     <th>Private Rooms</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="privateRoom">
                 <tr><td colspan="2">No game</td></tr>
             </tbody>
         </table>
@@ -77,7 +141,7 @@
                     <th>Full Rooms</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="fullRoom">
                 <tr><td colspan="2">No game</td></tr>
             </tbody>
         </table>
@@ -86,13 +150,52 @@
 
     <script src="js/jquery.slim.js"></script>
     <script src="js/signalr.js"></script>
+    <script> // Modal script
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        var passModal = document.getElementById("passModal");
+        
+        // Get the button that opens the modal
+        var btn = document.getElementById("createRoom");
+        
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        var span2 = document.getElementById("passClose");
+        
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+        
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+        
+        span2.onclick = function(){
+            passModal.style.display ="none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }else if(event.target == passModal){
+              passModal.style.display = "none";
+          }
+        }
+    </script>
     <script>
+        // ==============================================================
+        // General
+        // ==============================================================
         const username = sessionStorage.getItem('username');
 
         if(username != null){ //If session storage aldy having an username -- handles page reloading
             $('#username').text(username);
             $('#log').hide();
         }
+        
 
         $('form').submit(e => {
             e.preventDefault();
@@ -111,38 +214,75 @@
                 alert('Please enter your username!');
             }
         });
-    </script>
-    <!-- <script>
-        // ========================================================================================
-        // General
-        // ========================================================================================
 
-        const icon = sessionStorage.getItem('icon');
-        const name = sessionStorage.getItem('name');
-        if (!icon || !name) {
-            location = 'index.html';
-            throw 'ERROR: Invalid icon or name';
-        }
+        $('#roomType').on('change', e => {
+            let type = $(e.target).val();
+            if(type == "Private")
+            {
+                $('#hiddenPass').show();
+            }
+            else
+            {
+                $('#hiddenPass').hide();
+            }
+        });
 
-        $('#you').text(icon + ' ' + name);
-
-        // ========================================================================================
+        // ==============================================================
         // Events
-        // ========================================================================================
-
-        $('#create').click(async e => {
-            let gameId = await con.invoke('Create');
-            location = `game.html?gameId=${gameId}`;
+        // ==============================================================
+        $('#createRoom').click(async e => {
+            // let gameId = await con.invoke('Create');
+            // //location = `game.html?gameId=${gameId}`;
         });
 
-        $('tbody').on('click', '[data-join]', e => {
+        $('#quickPlay').click(e => {
+            alert('quickPlay');
+
+        });
+
+        $('tbody').on('click', '[data-join]', async e => {
             let gameId = $(e.target).data('join');
-            location = `game.html?gameId=${gameId}`;
+            let roomPass = await con.invoke('getRoomPass', gameId); //Get room password if it's private room, "" will be returned if its public type of room
+            if(roomPass != "") //Room is private
+            {  
+                $('#passModal').css('display', 'block');
+            }
+            else
+            {
+                location = `game.html?gameId=${gameId}`;
+            }
+            $('#joinPrivRoom').click(e => {
+                e.preventDefault();
+                if($('#passInput').val().trim() == roomPass)
+                {
+                    location = `game.html?gameId=${gameId}`;
+                }
+                else //Wrong password entered
+                {
+                    alert('Wrong password! Please enter again!')
+                }
+            
+            });
         });
 
-        // ========================================================================================
+       
+
+        $('#roomBtn').click(async e => {
+            e.preventDefault();
+
+            let roomName = $('#roomName').val().trim();
+            let roomType = $('#roomType').val();
+            let roomPass = $('#roomPass').val();
+            let roomPlayers = $('#noPlayers').val();
+            roomPlayers = roomPlayers * 1;
+        
+            
+            let gameId = await con.invoke('Create', roomName, roomType, roomPass, roomPlayers);
+            location = `game.html?gameId=${gameId}`;
+        })
+        // ==============================================================
         // Connect
-        // ========================================================================================
+        // ==============================================================
 
         const param = $.param({ page: 'list' });
 
@@ -155,32 +295,73 @@
             location = 'index.html';
         });
 
-        // TODO
+        con.on('UpdateCount', count => {
+            $('#count').text(count);
+        });
+
         con.on('UpdateList', list => {
-            let html = '';
+            let publicHtml = '';
+            let privateHtml = '';
+            let fullHtml = '';
 
             for (let game of list) {
-                html += `
+                if (game.isFull)
+                {
+                    fullHtml += `
                     <tr>
-                        <td>${game.playerA.icon} ${game.playerA.name}</td>
-                        <td><button data-join="${game.id}">Join</button></td>
+                        <td>Some room details here |</td>
                     </tr>
-                `;
+                    `;
+                }
+                else
+                {
+                    if(game.type == 'Public'){
+                        publicHtml += `
+                        <tr>
+                            <td>${game.name}|${game.type}|${game.noPlayers}|<button class="btn-join" style="float:right;" data-join="${game.id}">Join</button></td>
+                        </tr>
+                         `;
+                    }else if (game.type == 'Private'){
+                        privateHtml += `
+                        <tr>
+                            <td>${game.name}|${game.type}|${game.noPlayers}|<button class="btn-join" style="float:right;" data-join="${game.id}">Join</button></td>
+                        </tr>
+                         `;
+                    }
+                }
             }
 
             if (list.length == 0) {
                 html = '<tr><td colspan="2">No game</td></tr>';
+                $('#publicRoom, #fullRoom, #privateRoom').html(html);
             }
 
-            $('tbody').html(html);
+            if (publicHtml == '')
+            {
+                publicHtml = '<tr><td colspan="2">No game</td></tr>';
+            }
+
+            if (fullHtml == '')
+            {
+                fullHtml = '<tr><td colspan="2">No game</td></tr>';
+            }
+
+            if (privateHtml == '')
+            {
+                privateHtml = '<tr><td colspan="2">No game</td></tr>';
+            }
+
+            $('#publicRoom').html(publicHtml);
+            $('#privateRoom').html(privateHtml);
+            $('#fullRoom').html(fullHtml);
         });
 
         con.start().then(main);
 
         function main() {
-            $('#create').prop('disabled', false);
+            $('#createRoom, #quickPlay').prop('disabled', false);
         }
 
-    </script> -->
+    </script>
 </body>
 </html>

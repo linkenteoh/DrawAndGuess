@@ -2,223 +2,330 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PressRT 2.0 : Game</title>
+    <meta name="viewport" content="width=520, initial-scale=1.0">
+    <title>DrawRT 3.0</title>
     <link href="image/favicon.png" rel="shortcut icon">
     <link href="css/app.css" rel="stylesheet">
     <style>
-        #status {
-            text-align: center;
-            font-size: 2rem;
+        main{
+            margin: 0px auto;
+        }
+        #box {
+            border: 1px solid #999;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .container {
+        #pen {
+            background: #000;
+            border: 1px solid #000;
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+        }
+
+        #panel {
+            width: 500px;
+            margin-bottom: 10px;
             display: flex;
         }
 
-        .start, .finish {
-            flex: 0 0 auto;
-            padding: 10px;
-            width: 50px;
-            color: white;
-            text-align: center;
-        }
-
-        .start {
-            background-color: red;
-        }
-
-        .finish {
-            background-color: green;
-        }
-
-        .lane {
+        #size {
             flex: 1 1 auto;
+        }
+
+        #color {
+            width: 60px;
+            height: auto;
+        }
+
+        #canvas {
+            display: block;
             border: 1px solid #999;
-            position: relative;
+            cursor: pointer;
+            touch-action: none;
+            user-select: none;
         }
 
-        .icon {
-            font-size: 2.5rem;
-            position: absolute;
-            /* TODO */
-            top: 50%;
-            transform: translate(-50%, -50%);
-            margin-left: 0%;
-            transition: margin-left 0.1s;
-            animation: swing 0.3s linear 0s infinite alternate;
+        .canvas{
+            float:left;
         }
 
-        /* TODO */
-        @keyframes swing{
-            0% { transform: translate(-50%, -50%) rotate(-5deg) }
-            100% { transform: translate(-50%, -50%) rotate(+5deg) }
-        }
-
-        .me {
-            border: 3px solid blue;
-            border-radius: 5px;
+        .sidebar {
+            float:left;
         }
     </style>
 </head>
+
 <body>
     <header>
-        <h1><a href="/">PressRT 2.0 : Game</a></h1>
+        <h2><a href="/">Drawlah</a></h2>
+        <h5 id="username"></h5>
     </header>
 
-    <main>
-        <p><button id="leave">Leave</button></p>
-
-        <p id="status">Waiting another player...</p>
-
-        <div>Player A : <b id="nameA"></b></div>
-        <div class="container">
-            <div class="start">START</div>
-            <div class="lane">
-                <div class="icon" id="A" hidden></div>
+    <!-- TODO: Hide <main> section by default -->
+    <main hidden>
+        <div class="canvas">
+            <div class="canvas-header">
+               <h2>Room name</h2>
             </div>
-            <div class="finish">FINISH</div>
+            <div class="canvas-body">
+                <canvas id="canvas" width="700" height="700"></canvas>
+
+                <div id="panel">
+                    <div id="box">
+                        <div id="pen"></div>
+                    </div>
+
+                    <input type="range" id="size" min="1" max="30" step="1" value="5" list="ticks">
+                    <datalist id="ticks">
+                        <option value="5">
+                        <option value="10">
+                        <option value="15">
+                        <option value="20">
+                        <option value="25">
+                        <option value="30">
+                    </datalist>
+
+                    <input type="color" id="color" list="colors">
+                    <datalist id="colors">
+                        <option value="#ff0000">
+                        <option value="#ffa500">
+                        <option value="#ffff00">
+                        <option value="#008000">
+                        <option value="#0000ff">
+                        <option value="#4b0082">
+                        <option value="#ee82ee">
+                        <option value="#000000">
+                        <option value="#ffffff">
+                        <option value="#999999">
+                    </datalist>
+
+                    <button id="clear">🗑️</button>
+
+                    <button id="image">🖼️</button>
+                    <input type="file" id="file" accept="image/*" hidden>
+
+                    <button id="download">💾</button>
+                </div>
+            </div>
         </div>
 
-        <br>
-
-        <div>Player B : <b id="nameB"></b></div>
-        <div class="container">
-            <div class="start">START</div>
-            <div class="lane">
-                <div class="icon" id="B" hidden></div>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <p>Players</p>
             </div>
-            <div class="finish">FINISH</div>
+            <div class="sidebar-body">
+                <ul id="onlinePlayers">
+                    <li></li>
+                </ul>
+            </div>
         </div>
     </main>
 
     <script src="js/jquery.slim.js"></script>
     <script src="js/signalr.js"></script>
     <script>
-        // ========================================================================================
-        // General
-        // ========================================================================================
-               
-        const icon = sessionStorage.getItem('icon');
-        const name = sessionStorage.getItem('name');
-        if (!icon || !name) {
-            location = 'index.html';
-            throw 'ERROR: Invalid icon or name';
+        // (1) Interactive UI Events ==============================================================
+        $('#size').on('input', e => { 
+            let size = $('#size').val();
+            $('#pen').width(size).height(size);
+        });
+
+        $('#color').on('input', e => {
+            let color = $('#color').val();
+            $('#pen').css('background', color);
+        });
+
+        $('#size, #color').trigger('input');
+
+        $('#canvas').on('wheel', e => {
+            e.preventDefault();
+            let dy = e.originalEvent.deltaY;
+            if (dy < 0) {
+                $('#size')[0].stepUp();
+            }
+            else {
+                $('#size')[0].stepDown();
+            }
+            $('#size').trigger('input');
+        });
+
+        $(document).keydown(e => {
+            if (e.originalEvent.repeat) return;
+
+            switch (e.key) {
+                case '0': $('#clear').click(); break;
+                case '1': $('#color').val('#ff0000'); break;
+                case '2': $('#color').val('#ffa500'); break;
+                case '3': $('#color').val('#ffff00'); break;
+                case '4': $('#color').val('#008000'); break;
+                case '5': $('#color').val('#0000ff'); break;
+                case '6': $('#color').val('#4b0082'); break;
+                case '7': $('#color').val('#ee82ee'); break;
+                case '8': $('#color').val('#000000'); break;
+                case '9': $('#color').val('#ffffff'); break;
+            }
+            $('#color').trigger('input');
+        });
+
+        // (2) General Functions ==================================================================
+        const can = $('#canvas')[0];
+        const ctx = can.getContext('2d');
+
+        ctx.lineCap    = 'round';
+        ctx.lineJoin   = 'round';
+        ctx.shadowBlur = 0;
+        clear();
+
+        function drawLine(a, b, size, color) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.lineWidth = size;
+            ctx.strokeStyle = color;
+            ctx.shadowColor = color;
+            ctx.stroke();
         }
 
+        function drawCurve(a, b, c, size, color) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.quadraticCurveTo(b.x, b.y, c.x, c.y);
+            ctx.lineWidth = size;
+            ctx.strokeStyle = color;
+            ctx.shadowColor = color;
+            ctx.stroke();
+        }
+
+        function clear() {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, can.width, can.height);
+        }
+
+        // TODO: Convert to promise (awaitable function)
+        function drawImage(url) {
+            return new Promise(resolve => {
+                let img = new Image();
+                img.onload = e => {
+                    ctx.drawImage(img, 0, 0);
+                    resolve();
+                };
+                img.src = url;
+            });
+        }
+
+        function mid(a, b) {
+            return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        }
+
+        // TODO: Awaitable sleep function
+        function sleep(ms){
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // (3) Draw Events ========================================================================
+        
+        let arr = [];
+
+        $('#canvas').on('pointermove pointerout', e => {
+            if (e.buttons == 1 && e.originalEvent.isPrimary) {
+                let size  = $('#size').val() * 1;
+                let color = $('#color').val();
+
+                // 1. Add start point (if needed)
+                if (arr.length == 0) {
+                    arr.push({ x: e.offsetX - e.originalEvent.movementX, y: e.offsetY - e.originalEvent.movementY });
+                }
+                
+                // 2. Add new point
+                arr.push({ x: e.offsetX, y: e.offsetY });
+                arr = arr.slice(-3); // Keep last 3 points only
+
+                if (arr.length >= 3) {
+                    // arr = [0, 1, 2]
+                    let a = mid(arr[0], arr[1]);
+                    let b = arr[1];
+                    let c = mid(arr[1], arr[2]);
+                    drawCurve(a, b, c, size, color);
+                    // TODO(A): Hub method
+                    con.invoke('SendCurve', a, b, c, size, color, gameId);
+                }
+                else {
+                    // arr = [0, 1]
+                    let a = arr[0];
+                    let b = mid(arr[0], arr[1]);
+                    drawLine(a, b, size, color);
+                    // TODO(B): Hub method
+                    con.invoke('SendLine', a, b, size, color, gameId);
+                }
+            }
+        });
+
+        $('#canvas').on('pointerup pointerout', e => {
+            if (arr.length >= 2) {
+                arr = arr.slice(-2); // Keep last 2 points only
+
+                let size  = $('#size').val() * 1;
+                let color = $('#color').val();
+
+                // arr = [0, 1]
+                let a = mid(arr[0], arr[1]);
+                let b = arr[1];
+                drawLine(a, b, size, color);
+                // TODO(C): Hub method
+                con.invoke('SendLine', a, b, size, color, gameId);
+            }
+            arr = [];
+        });
+
+        $('#clear').click(e => {
+            clear();
+            // TODO(D): Hub method
+            con.invoke('SendClear', gameId);
+        });
+
+        $('#download').click(e => {
+            let a = $('<a>')[0];
+            a.href = can.toDataURL('image/png') ;
+            a.download = Date.now() + '.png';
+            a.click();
+        });
+
+        // (4) SignalR ============================================================================
+        const name = sessionStorage.getItem('username');
         const gameId = new URL(location).searchParams.get('gameId');
-        if (!gameId) {
-            location = 'list.html';
-            throw 'ERROR: Invalid game id';
-        }
 
-        let started = false;
-        let me = null; // A or B
-        const $status = $('#status');
-
-        // ========================================================================================
-        // Events
-        // ========================================================================================
-
-        $('#leave').click(e => location = 'list.html');
-       
-        // ========================================================================================
-        // Connect
-        // ========================================================================================
-
-        const param = $.param({ page: 'game', icon, name, gameId });
+        const param = $.param({ page: 'game', name, gameId });
 
         const con = new signalR.HubConnectionBuilder()
             .withUrl('/hub?' + param)
             .build();
-        
+
         con.onclose(err => {
             alert('Disconnected');
-            location = 'index.html';
+            location = '/';
         });
 
-        con.on('Reject', () => location = 'list.html');
+        con.on('ReceiveLine', drawLine);
+        con.on('ReceiveCurve', drawCurve);
+        con.on('ReceiveImage', drawImage);
+        con.on('ReceiveClear', clear);
 
-        con.on('Ready', (letter, game) => {
-            if (game.playerA) {
-                $('#nameA').text(game.playerA.name);
-                $('#A').text(game.playerA.icon).show();
-            }
-
-            if (game.playerB) {
-                $('#nameB').text(game.playerB.name);
-                $('#B').text(game.playerB.icon).show();
-            }
-
-            if (me == null) {
-                me = letter;
-                $('#' + me).addClass('me');
-            }
-
-            // TODO: Host starts the game
-            if (me == 'A' && game.isFull)
-            {
-                con.invoke('Start');
-            }
+        con.on('UpdatePlayers', name => {
+            $('#onlinePlayers').append(`
+                <li>
+                    ${name}
+                </li>
+            `);
         });
 
-        con.on('Left', letter => {
-            let id = setTimeout(() => location = 'list.html', 3000);
-            while (id--) clearTimeout(id);
-            
-            started = false;
-            $status.text(`Player ${letter} left. You win!`);
+        con.start().then(() => {
+            $('main').show();
         });
-
-        // TODO: Start()
-        con.on('Start', () => {
-            setTimeout(() => $status.text('Ready... 3'), 1000);
-            setTimeout(() => $status.text('Ready... 2'), 2000);
-            setTimeout(() => $status.text('Ready... 1'), 3000);
-            setTimeout(() => {
-                $status.text('Press SPACE to run!');
-                started = true;
-            }, 4000);
-        });
-
-        // TODO: Move(letter, count)
-        con.on('Move', (letter, count) => {
-            $('#' + letter).css('margin-left', count + "%");
-        });
-
-        // TODO: Win(letter)
-        con.on('Win', letter => {
-            started = false;
-
-            if(me == letter){
-                $status.text('You win!');
-            }
-            else{
-                $status.text('You lose!');
-            }
-
-            setTimeout(() => location = 'list.html', 3000);
-        })
-
-        con.start().then(main);
-
-        function main() {
-            // TODO: Keyboard event
-            $(document).keydown(e => {
-                if (started && e.code == 'Space' && !e.originalEvent.repeat)
-                {
-                    con.invoke('Run', me);
-                }
-            });
-
-            // TODO: Pointer event
-            $(document).on('pointerdown', e => {
-                if(started && e.buttons == 1 && e.originalEvent.isPrimary){
-                    con.invoke('Run', me);
-                }
-            })
-
-        }
         
     </script>
 </body>
