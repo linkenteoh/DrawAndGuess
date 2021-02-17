@@ -1,38 +1,36 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.1": {}
+    "net5.0": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.1": []
+    "net5.0": []
   },
   "packageFolders": {
-    "C:\\Users\\linke\\.nuget\\packages\\": {}
+    "C:\\Users\\Junli\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\DrawAndGuess.csproj",
+      "projectUniqueName": "C:\\Users\\Junli\\OneDrive\\Desktop\\Y2S3\\Web\\Assignment P1\\DrawAndGuess.csproj",
       "projectName": "DrawAndGuess",
-      "projectPath": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\DrawAndGuess.csproj",
-      "packagesPath": "C:\\Users\\linke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\obj\\",
+      "projectPath": "C:\\Users\\Junli\\OneDrive\\Desktop\\Y2S3\\Web\\Assignment P1\\DrawAndGuess.csproj",
+      "packagesPath": "C:\\Users\\Junli\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Junli\\OneDrive\\Desktop\\Y2S3\\Web\\Assignment P1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\linke\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Junli\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "netcoreapp3.1"
+        "net5.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
+        "net5.0": {
+          "targetAlias": "net5.0",
           "projectReferences": {}
         }
       },
@@ -43,8 +41,8 @@
       }
     },
     "frameworks": {
-      "netcoreapp3.1": {
-        "targetAlias": "netcoreapp3.1",
+      "net5.0": {
+        "targetAlias": "net5.0",
         "imports": [
           "net461",
           "net462",

@@ -209,9 +209,19 @@ namespace DrawAndGuess
             string id     = Context.ConnectionId;
             string name   = Context.GetHttpContext().Request.Query["name"];
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
-            
+            var username = new List<string>();
 
-            await Clients.Group(gameId).SendAsync("UpdatePlayers", name);
+            
+            usernames.Add(new Usernames(name, gameId));
+            await Groups.AddToGroupAsync(id, gameId);
+            foreach (var item in usernames)
+            {
+                if(gameId == item.GameId){
+                    username.Add(item.Name);
+                }
+            }
+            string[] arrayOfStrings = username.ToArray();
+            await Clients.Group(gameId).SendAsync("UpdatePlayers", username);
 
             Game game = games.Find(g => g.Id == gameId);
             if (game == null || game.IsFull)
@@ -222,7 +232,7 @@ namespace DrawAndGuess
 
             Player p = new Player(id, name);
             string letter = game.AddPlayer(p);
-            await Groups.AddToGroupAsync(id, gameId);
+            // await Groups.AddToGroupAsync(id, gameId);
             await Clients.Group(gameId).SendAsync("Ready", letter, game);
             await UpdateList();
         }

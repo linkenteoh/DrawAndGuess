@@ -315,12 +315,15 @@
         con.on('ReceiveImage', drawImage);
         con.on('ReceiveClear', clear);
 
-        con.on('UpdatePlayers', name => {
-            $('#onlinePlayers').append(`
-                <li>
-                    ${name}
-                </li>
-            `);
+        con.on('UpdatePlayers', names => {
+            for(let name of names){
+                $('#onlinePlayers').append(`
+                    <li>
+                        ${name}
+                    </li>
+                `);
+            }
+            
         });
 
         con.start().then(() => {

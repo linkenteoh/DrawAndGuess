@@ -21,3 +21,26 @@ C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGu
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\ref\DrawAndGuess.dll
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGuess.pdb
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGuess.genruntimeconfig.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\appsettings.json
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\DrawAndGuess.exe
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\DrawAndGuess.deps.json
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\DrawAndGuess.runtimeconfig.json
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\DrawAndGuess.runtimeconfig.dev.json
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\DrawAndGuess.dll
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\ref\DrawAndGuess.dll
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\bin\Debug\net5.0\DrawAndGuess.pdb
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.csprojAssemblyReference.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.AssemblyInfoInputs.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.AssemblyInfo.cs
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.csproj.CoreCompileInputs.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\staticwebassets\DrawAndGuess.StaticWebAssets.Manifest.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\staticwebassets\DrawAndGuess.StaticWebAssets.xml
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\scopedcss\bundle\DrawAndGuess.styles.css
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.RazorTargetAssemblyInfo.cache
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.dll
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\ref\DrawAndGuess.dll
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.pdb
+C:\Users\Junli\OneDrive\Desktop\Y2S3\Web\Assignment P1\obj\Debug\net5.0\DrawAndGuess.genruntimeconfig.cache
