@@ -211,8 +211,9 @@ namespace DrawAndGuess
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
             var username = new List<string>();
 
-            
-            usernames.Add(new Usernames(name, gameId));
+        
+            usernames.Add(new Usernames(name, gameId));                
+
             await Groups.AddToGroupAsync(id, gameId);
             foreach (var item in usernames)
             {
@@ -220,9 +221,11 @@ namespace DrawAndGuess
                     username.Add(item.Name);
                 }
             }
-            string[] arrayOfStrings = username.ToArray();
-            await Clients.Group(gameId).SendAsync("UpdatePlayers", username);
 
+            string[] arrayOfStrings = username.ToArray();
+            await Clients.Caller.SendAsync("UpdatePlayers", username);
+            await Clients.OthersInGroup(gameId).SendAsync("NewPlayer", name);
+            
             Game game = games.Find(g => g.Id == gameId);
             if (game == null || game.IsFull)
             {
@@ -245,7 +248,6 @@ namespace DrawAndGuess
         {
             count--;
             await Clients.All.SendAsync("UpdateCount", count);
-
             string page = Context.GetHttpContext().Request.Query["page"];
 
             switch (page)
@@ -265,31 +267,37 @@ namespace DrawAndGuess
         private async Task GameDisconnected()
         {
             string id     = Context.ConnectionId;
+            string name   = Context.GetHttpContext().Request.Query["name"];
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
+            
+            usernames.RemoveAll(x => x.GameId == gameId && x.Name == name);
+            
+            await Clients.Group(gameId).SendAsync("Left", name);
 
-            Game game = games.Find(g => g.Id == gameId);
-            if (game == null)
-            {
-                await Clients.Caller.SendAsync("Reject");
-                return;
-            }
 
-            if (game.PlayerA?.Id == id)
-            {
-                game.PlayerA = null;
-                await Clients.Group(gameId).SendAsync("Left", "A");
-            }
-            else if (game.PlayerB?.Id == id)
-            {
-                game.PlayerB = null;
-                await Clients.Group(gameId).SendAsync("Left", "B");
-            }
+            // Game game = games.Find(g => g.Id == gameId);
+            // if (game == null)
+            // {
+            //     await Clients.Caller.SendAsync("Reject");
+            //     return;
+            // }
 
-            if (game.IsEmpty)
-            {
-                games.Remove(game);
-                await UpdateList();
-            }
+            // if (game.PlayerA?.Id == id)
+            // {
+            //     game.PlayerA = null;
+            //     await Clients.Group(gameId).SendAsync("Left", "A");
+            // }
+            // else if (game.PlayerB?.Id == id)
+            // {
+            //     game.PlayerB = null;
+            //     await Clients.Group(gameId).SendAsync("Left", "B");
+            // }
+
+            // if (game.IsEmpty)
+            // {
+            //     games.Remove(game);
+            //     await UpdateList();
+            // }
         }
 
         // End of GameHub -------------------------------------------------------------------------
