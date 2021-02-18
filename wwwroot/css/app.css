@@ -6,6 +6,9 @@ body, input, textarea, select, button {
     font-family: 'Roboto', sans-serif;
 }
 
+/**** Leaderboard ****/
+
+
 /***** Layout *****/
 body {
     margin: 0;
@@ -15,7 +18,7 @@ body {
 }
 
 header {
-    background:blue;
+    background:#85B3D1FF;
     color: #fff;
     padding: 10px 50px;
     clear: both;
@@ -48,16 +51,18 @@ main {
 }
 
 #overlay {
-    position: fixed;
+    position: absolute;
     display: block;
     width: 100%;
     height: 100%;
+    opacity: 0.5;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.5);
 }
+
 
 #login{
     width: 100%;
@@ -161,7 +166,7 @@ main {
     /* box-shadow: 0px 1px 5px #888, 0px -1px 5px #888; */
     margin: 0px;
     padding: 2px 16px;
-    background-color: rgba(17, 0, 255, 0.822);
+    background-color: #2460A7FF;
     color: white;
 }
 
@@ -173,33 +178,71 @@ main {
     position: relative;
 }
 
-.sidebar-header{
+.board-header{
     margin: 0px auto;
     padding: 2px 16px;
-    background-color: rgb(0, 0, 148);
+    background-color: #2460A7FF;
     color:white;
 }
 
-.sidebar-header p{
+.board-header p{
     margin: 10px 0px;
     font-weight: bold;
     font-size: 1em;
 }
 
-.sidebar-body{
+.board-body{
 
 }
 
-.sidebar-body ul{
+.board-body ol{
     padding: 0px;
     margin: 0px;
+    
 }
 
-.sidebar-body ul li{
-    list-style: none;
-    border-bottom: 1px solid gray;
-    border-right: 1px solid gray;
+.board-body ol li{
+    list-style-position: inside;
     padding:5px;
+    border: 1px solid gray;;
+}
+
+.msgBar{
+    border: 1px solid gray;
+    position: relative;
+    height: auto;
+}
+
+.messages ul{
+    padding:0px;
+    margin:0px;
+}
+
+.messages ul li{
+    list-style: none;
+    padding: 5px;
+}
+
+#chatInput:focus{
+    outline: none;
+}
+
+#waitText{
+    width: 100%;
+    padding: 6px 0px 6px 0px;
+    position: absolute;
+    background: #B3C7D6FF;
+    top: 40%;
+    left: 50%;
+    font-size: 1.5em;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+#waitText p{
+    text-align: center;
+    font-weight: bolder;
 }
 
 /***** Input *****/
@@ -395,6 +438,32 @@ input[type=text] {
     justify-content: center;
     font-size: 28px;
   }
+
+/**** Loading dots *****/
+.loading:after {
+    content: ' .';
+    animation: dots 1s steps(5, end) infinite;}
+  
+  @keyframes dots {
+    0%, 20% {
+      color: rgba(0,0,0,0);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    40% {
+      color: white;
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    60% {
+      text-shadow:
+        .25em 0 0 white,
+        .5em 0 0 rgba(0,0,0,0);}
+    80%, 100% {
+      text-shadow:
+        .25em 0 0 white,
+        .5em 0 0 white;}}
+  
 
 /***** Media Query *****/
 @media only screen and (max-width: 960px) {

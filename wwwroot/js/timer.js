@@ -48,7 +48,6 @@ document.getElementById("app").innerHTML = `
 </div>
 `;
 
-startTimer();
 
 function onTimesUp() {
   const { alert, warning, info } = COLOR_CODES;
@@ -62,7 +61,6 @@ function onTimesUp() {
     document
       .getElementById("base-timer-path-remaining")
       .classList.add(info.color);
-  startTimer();
 }
 
 
@@ -75,7 +73,7 @@ function startTimer() {
       document.getElementById("timer-beep").play();
     }
 
-    console.log(timeLeft);
+    //console.log(timeLeft);
     
     document.getElementById("base-timer-label").innerHTML = 
       timeLeft

@@ -20,6 +20,7 @@ namespace DrawAndGuess
         public string Name { get; set; }
         public int Count { get; set; } = 0;
         public bool IsWin => Count >= FINISH;
+        public bool IsDrawing { get; set; } = false;
 
         public Player(string id, string name) => (Id, Name) = (id, name);
 
@@ -39,27 +40,30 @@ namespace DrawAndGuess
         public string type { get; set; }
         public string pass { get; set; }
         public int noPlayers { get; set; }
-        public Player PlayerA { get; set; }
-        public Player PlayerB { get; set; }
-        public bool IsWaiting { get; set; } = false;
+        public List<Player> Players { get; set; } = new List<Player>();
+        public bool IsWaiting { get; set; } = true;
 
-        public bool IsEmpty => PlayerA == null && PlayerB == null;
-        public bool IsFull  => PlayerA != null && PlayerB != null;
+        public bool IsEmpty => Players == null;
+        public bool IsFull  => Players.Count == noPlayers;
 
         public string AddPlayer(Player player)
         {
-            if (PlayerA == null)
-            {
-                PlayerA = player;
-                IsWaiting = true;
-                return "A";
-            }
-            else if (PlayerB == null)
-            {
-                PlayerB = player;
+            Players.Add(player);
+            if(Players.Count == noPlayers){
                 IsWaiting = false;
-                return "B";
             }
+            // if (PlayerA == null)
+            // {
+            //     PlayerA = player;
+            //     IsWaiting = true;
+            //     return "A";
+            // }
+            // else if (PlayerB == null)
+            // {
+            //     PlayerB = player;
+            //     IsWaiting = false;
+            //     return "B";
+            // }
 
             return null;
         }
@@ -117,8 +121,9 @@ namespace DrawAndGuess
         }
 
         // TODO: Start()
-        public async Task Start()
+        public async Task Start(int p)
         {
+            int player = 0;
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
 
             Game game = games.Find(g => g.Id == gameId);
@@ -127,8 +132,17 @@ namespace DrawAndGuess
                 await Clients.Caller.SendAsync("Reject");
                 return;
             }
-
+            
+            
+            
             await Clients.Group(gameId).SendAsync("Start");
+            string drawId = game.Players[p].Id;
+            await SendDrawText(drawId, p);
+        }
+
+        public async Task SendDrawText(string id, int player)
+        {
+            await Clients.Client(id).SendAsync("DrawText", player);
         }
 
         // ----------------------------------------------------------------------------------------
@@ -227,16 +241,10 @@ namespace DrawAndGuess
             await Clients.OthersInGroup(gameId).SendAsync("NewPlayer", name);
             
             Game game = games.Find(g => g.Id == gameId);
-            if (game == null || game.IsFull)
-            {
-                await Clients.Caller.SendAsync("Reject");
-                return;
-            }
-
             Player p = new Player(id, name);
-            string letter = game.AddPlayer(p);
-            // await Groups.AddToGroupAsync(id, gameId);
-            await Clients.Group(gameId).SendAsync("Ready", letter, game);
+            game.AddPlayer(p);
+            await Groups.AddToGroupAsync(id, gameId);
+            await Clients.Group(gameId).SendAsync("PlayerJoined", game);
             await UpdateList();
         }
 
@@ -271,8 +279,16 @@ namespace DrawAndGuess
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
             
             usernames.RemoveAll(x => x.GameId == gameId && x.Name == name);
-            
+            Game game = games.Find(g => g.Id == gameId);
+            Player player = game.Players.Find(p => p.Id == id);
+            game.Players.Remove(player);
             await Clients.Group(gameId).SendAsync("Left", name);
+
+            if(game.Players.Count == 0){
+                games.Remove(game);
+            }
+
+            await UpdateList();
 
 
             // Game game = games.Find(g => g.Id == gameId);
@@ -298,6 +314,14 @@ namespace DrawAndGuess
             //     games.Remove(game);
             //     await UpdateList();
             // }
+        }
+
+        // ----------------------------------------------------------------------------------------
+        // Messages
+        // ----------------------------------------------------------------------------------------
+        public async Task SendText(string gameId, string message, string name)
+        {
+            await Clients.Group(gameId).SendAsync("ReceiveText", name, message);
         }
 
         // End of GameHub -------------------------------------------------------------------------
