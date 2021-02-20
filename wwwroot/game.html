@@ -84,7 +84,7 @@
 
         <div class="canvas">
             <div class="canvas-header">
-               <h2>Room name</h2>
+               <h2 id="question"></h2>
             </div>
             <div class="canvas-body">
                 <canvas id="canvas" width="700" height="700">
@@ -344,6 +344,7 @@
             clear();
             // TODO(D): Hub method
             con.invoke('SendClear', gameId);
+
         });
 
         $('#download').click(e => {
@@ -373,33 +374,45 @@
         con.on('ReceiveImage', drawImage);
         con.on('ReceiveClear', clear);
 
-        con.on('UpdatePlayers', names => { //Call when user first join the room - to retrieve lists of players connected
-            for(let name of names){
-                $('#onlinePlayers').append(`
-                    <li>
-                        ${name}
-                    </li>
-                `);
+        con.on('UpdatePlayers', players => { //Call when user first join the room - to retrieve lists of players connected
+            console.log(players);
+            var html = "";
+            for(let i = 0; i < players.length; i ++){
+                console.log(players[i].name);
+                html += `<li>${players[i].name}  | ${players[i].score}pts</li>`;
             }
+                // $('#onlinePlayers').append(`
+                //     <li>
+                //         ${name}
+                //     </li>
+                // `);
+            $('#onlinePlayers')[0].innerHTML = html;
             
         });
 
-        con.on('NewPlayer', name => { //Call when new user joined - update specific new player name
-            $('#onlinePlayers').append(`
-                <li>${name}</li>
-            `);
-        });
 
         con.on('Left', name => { //Call when user left the room
             $('#onlinePlayers li:contains('+name+')').remove();
         });
 
-        con.on('ReceiveText', (name, msg) => {
-            msg = msg
+        con.on('ReceiveText', (name, msg, type) => {
+            if(type == "NormalChat")
+            {
+                msg = msg
                 .split(':)').join('😊')
                 .split(':(').join('😥')
                 .split('<3').join('❤️');
-            $('#msg').append(`<li>${name}: ${msg}</li>`);
+                $('#msg').append(`<li>${name}: ${msg}</li>`);
+            }
+            else if(type == "Ans")
+            {
+                $('#msg').append(`<li>${name} ${msg}</li>`);
+            }
+            else if(type == "OwnGuess")
+            {
+                $('#msg').append(`<li>${msg}</li>`);
+            }
+            
         });
 
         con.on('Reject', () => location = 'index.html');
@@ -409,34 +422,83 @@
                 con.invoke('Start', 0);
             }else{
                 $('.loading').text("Waiting for others to join");
-                console.log(TIME_LIMIT);
-
             }
         });
 
-        con.on('Start', () => {
+        function test(){
+            startTimer();
+            $('#app').show();
+        }
+
+        con.on('Start', function(game, conId, drawIndex) {
+            console.log('Noindex:' + drawIndex);
+            if(drawIndex > game.noPlayers){
+                alert('Game ends');
+                return;
+            }
+
+            
+            startTimer();
+            $('#app').show();
             $('#waitText').hide();
             //$('#panel').show();
-            
+            console.log(game);
+            for(var player in game.players) 
+            {
+                var player = game.players[player];
+                //console.log(player);
+                if(player.isDrawing == true)
+                {
+                    // document.getElementById("drawingName").innerHTML = player.name + 'is drawing ';
+                    $('#question')[0].innerHTML = player.name + ' is drawing ';
+                    $('#question')[0].append(game.question);
+                    //$('#question')[0].append(game.question.replace(/./g, '_ '));
+                }
 
+                if(player.id == conId && player.isDrawing == true)
+                {
+                    $('.loading').text("You are drawing!");
+                    $('#waitText').show();
+                    setTimeout(function(){ $('#loadState').hide(); }, 2000);
+                    $('#panel').show();
+
+                }
+                else if(player.id == conId && player.isDrawing == false)
+                {
+                    $('#loadState').show();
+                    $('#panel').hide();
+
+                }
+
+            }
+            con.invoke('SendClear', gameId); //Clear canvas after each player's turn
+            drawIndex++;
+            
+            setTimeout(function(){
+                        con.invoke('Start', drawIndex);
+                     }, 15000); //Alowing users 60 seconds to draw then chg nxt player
         });
+
 
         con.on('DrawText', (player) => {
-            // if(player == 1){
-            //     alert('END');
-            // }
-            // player++;
-            // $('.loading').text("You are drawing!");
-            // $('#waitText').show();
-            // setTimeout(function(){ $('#loadState').hide(); }, 2000);
-            // $('#panel').show();
-
-            // startTimer();
-            
-            // $('#app').show();
-            // setTimeout(function(){ con.invoke('Start', player);$('#loadState').show(); $('#panel').hide }, 10000);
-            
+            player++;
+            $('.loading').text("You are drawing!");
+            $('#waitText').show();
+            setTimeout(function(){ $('#loadState').hide(); }, 2000);
+            $('#panel').show();            
+            setTimeout(function(){ con.invoke('Start', player);$('#loadState').show(); $('#panel').hide }, 15000);
         });
+
+        con.on("StartTimer", () => {
+            //startTimer();
+            //$('#app').show();
+        });
+
+        con.on("END", () => {
+            //startTimer();
+            //$('#app').show();
+            alert('GameENDS!');
+        })
 
 
         con.start().then(() => {
