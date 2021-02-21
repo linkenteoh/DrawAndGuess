@@ -43,9 +43,13 @@ namespace DrawAndGuess
         public string type { get; set; }
         public string pass { get; set; }
         public int noPlayers { get; set; }
+        public int noRounds { get; set; }
+        public int currentRound { get; set; } 
         public string question { get; set; }
         public List<Player> Players { get; set; } = new List<Player>();
         public bool IsWaiting { get; set; } = true;
+
+        public bool IsEnd => currentRound > noRounds;
 
         public bool IsEmpty => Players == null;
         public bool IsFull  => Players.Count == noPlayers;
@@ -105,7 +109,7 @@ namespace DrawAndGuess
         private static string[] questions = {"Cat", "Dog", "Fish", "Water", "Apple", "Goldfish", "Crocodile"};
 
 
-        public string Create(string roomName, string roomType, string roomPass, int roomPlayers)
+        public string Create(string roomName, string roomType, string roomPass, int roomPlayers, int rounds)
         {
             var game = new Game();
             game.IsWaiting = true;
@@ -113,6 +117,7 @@ namespace DrawAndGuess
             game.type = roomType;
             game.pass = roomPass;
             game.noPlayers = roomPlayers;
+            game.noRounds = rounds;
             
             games.Add(game);
             return game.Id;
@@ -129,26 +134,35 @@ namespace DrawAndGuess
         }
 
 
-        public async Task Start(int drawIndex)
+        public async Task Start(int drawIndex, int currentRound) // 1 , 2 
         {
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
             
-            
-
             Game game = games.Find(g => g.Id == gameId);
+            game.currentRound = currentRound; //Game round 2 
             if (game == null)
             {
                 await Clients.Caller.SendAsync("Reject");
                 return;
             }
 
-            AssignQues(game, drawIndex);
+            //await AssignQues(game, drawIndex);
+            game.question = questions[drawIndex];
             
-            //game.Players.ToArray();
-            //Timer timer = new Timer(1000);
             if(drawIndex == game.noPlayers) //5th player's turn in a 4players room which does not exist - represents game ends.
             {
-                await Clients.Caller.SendAsync("END");
+                if(game.IsEnd)
+                {
+                    await Clients.Caller.SendAsync("End");
+                    return;
+                }else{
+                    game.Players[drawIndex - 1].IsDrawing = false;
+                    game.Players[0].IsDrawing = true;
+
+                    await Clients.Caller.SendAsync("NewRound", game, 0, game.currentRound);
+                    return;
+                }
+                
             }
             else
             {
@@ -156,21 +170,18 @@ namespace DrawAndGuess
                 if(drawIndex > 0){
                     game.Players[drawIndex -1].IsDrawing = false;
                 }
-                await Clients.Caller.SendAsync("Start", game, Context.ConnectionId, drawIndex);
+                await Clients.Caller.SendAsync("Start", game, Context.ConnectionId, drawIndex, game.currentRound);
             }
-            //await Clients.Group(gameId).SendAsync("StartTimer");
-            //string drawId = game.Players[p].Id;
-            //await SendDrawText(drawId, p);
         }
 
-        public async Task AssignQues(Game game, int index){
-            // Random pick one string from the array
-            Random rand = new Random();  
-            //int index = rand.Next(questions.Length);
+        // public async Task AssignQues(Game game, int index){
+        //     // Random pick one string from the array
+        //     Random rand = new Random();  
+        //     //int index = rand.Next(questions.Length);
 
-            //Assign random question into specific game object
-            game.question = questions[index];
-        }
+        //     //Assign random question into specific game object
+        //     game.question = questions[index];
+        // }
 
         public async Task SendDrawText(string id, int player)
         {
@@ -328,18 +339,25 @@ namespace DrawAndGuess
         public async Task SendText(string gameId, string message, string name)
         {
             Game game = games.Find(g => g.Id == gameId);
+            Player player = game.Players.Find(p => p.Id == Context.ConnectionId);
+
             string ans = game.question;
-            if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase))
+
+            if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase) && !player.IsDrawing)
             {
                 await Clients.OthersInGroup(gameId).SendAsync("ReceiveText", name, "guessed correctly!" ,"Ans");
-                await Clients.Caller.SendAsync("ReceiveText", name, "You've guessed right! + 25pts", "OwnGuess");
-                Player player = game.Players.Find(p => p.Id == Context.ConnectionId);
+                await Clients.Caller.SendAsync("ReceiveText", name, "You've guessed right! + 25pts", "SysMsg");
                 player.Score += 25;
                 await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players);
             }
+            else if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase) && player.IsDrawing)
+            {
+                await Clients.Caller.SendAsync("ReceiveText", name, "You're not guessing.", "SysMsg");
+
+            }
             else
             {
-                await Clients.Group(gameId).SendAsync("ReceiveText", name, message, "NormalChat");
+                await Clients.Group(gameId).SendAsync("ReceiveText", name, message, "SysMsg");
             }
          
   

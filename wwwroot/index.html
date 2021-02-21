@@ -82,6 +82,9 @@
                     <option value="3">3</option>
                     <option value="4">4</option>
                 </select>
+
+                <label for="noRounds"><strong>No of rounds</strong></label>
+                <input type="text" id="noRounds" placeholder="Number of rounds">
                 
                 <button class="btn" id="roomBtn" style="width: 100%;"><b>Start Playing!</b></button>
             </form>
@@ -274,10 +277,13 @@
             let roomType = $('#roomType').val();
             let roomPass = $('#roomPass').val();
             let roomPlayers = $('#noPlayers').val();
-            roomPlayers = roomPlayers * 1;
+            let rounds = $('#noRounds').val();
+
+            rounds *= 1;
+            roomPlayers *= 1;
         
             
-            let gameId = await con.invoke('Create', roomName, roomType, roomPass, roomPlayers);
+            let gameId = await con.invoke('Create', roomName, roomType, roomPass, roomPlayers, rounds);
             location = `game.html?gameId=${gameId}`;
         })
         // ==============================================================

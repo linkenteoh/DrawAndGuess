@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7R9FOgH+0RauGS+/E6pgbjApJy7Iq75C2wyskZCPLoKJzaZD9bkrsbH0l8x2qBA0dP35CqPHOx87bjbfqtm4/g==",
+  "dgSpecHash": "gey+fcC8izRhp8E9s9H34UJBAF1+Rg0SUABl4AgLLrTkNEVgrXQjY0gESfBXTseby12D4N4oMjOeNTDOBe9ECg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\DrawAndGuess.csproj",
+  "projectFilePath": "C:\\Users\\linke\\Desktop\\DrawGuess\\DrawAndGuess.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

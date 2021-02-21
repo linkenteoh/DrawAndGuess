@@ -21,3 +21,26 @@ C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\staticweb
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\scopedcss\bundle\DrawAndGuess.styles.css
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGuess.RazorTargetAssemblyInfo.cache
 C:\Users\linke\Desktop\Emerging web tech\DrawAndGuess\obj\Debug\net5.0\DrawAndGuess.genruntimeconfig.cache
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\appsettings.json
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\DrawAndGuess.exe
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\DrawAndGuess.deps.json
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\DrawAndGuess.runtimeconfig.json
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\DrawAndGuess.runtimeconfig.dev.json
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\DrawAndGuess.dll
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\ref\DrawAndGuess.dll
+C:\Users\linke\Desktop\DrawGuess\bin\Debug\net5.0\DrawAndGuess.pdb
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.csprojAssemblyReference.cache
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.AssemblyInfoInputs.cache
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.AssemblyInfo.cs
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.csproj.CoreCompileInputs.cache
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\staticwebassets\DrawAndGuess.StaticWebAssets.Manifest.cache
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\staticwebassets\DrawAndGuess.StaticWebAssets.xml
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\scopedcss\bundle\DrawAndGuess.styles.css
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.RazorTargetAssemblyInfo.cache
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.dll
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\ref\DrawAndGuess.dll
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.pdb
+C:\Users\linke\Desktop\DrawGuess\obj\Debug\net5.0\DrawAndGuess.genruntimeconfig.cache

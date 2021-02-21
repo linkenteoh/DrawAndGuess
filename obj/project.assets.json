@@ -8,20 +8,25 @@
     "net5.0": []
   },
   "packageFolders": {
-    "C:\\Users\\linke\\.nuget\\packages\\": {}
+    "C:\\Users\\linke\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\DrawAndGuess.csproj",
+      "projectUniqueName": "C:\\Users\\linke\\Desktop\\DrawGuess\\DrawAndGuess.csproj",
       "projectName": "DrawAndGuess",
-      "projectPath": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\DrawAndGuess.csproj",
+      "projectPath": "C:\\Users\\linke\\Desktop\\DrawGuess\\DrawAndGuess.csproj",
       "packagesPath": "C:\\Users\\linke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\linke\\Desktop\\Emerging web tech\\DrawAndGuess\\obj\\",
+      "outputPath": "C:\\Users\\linke\\Desktop\\DrawGuess\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
         "C:\\Users\\linke\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
@@ -63,7 +68,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   }

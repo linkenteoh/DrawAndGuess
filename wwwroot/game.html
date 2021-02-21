@@ -375,17 +375,11 @@
         con.on('ReceiveClear', clear);
 
         con.on('UpdatePlayers', players => { //Call when user first join the room - to retrieve lists of players connected
-            console.log(players);
             var html = "";
             for(let i = 0; i < players.length; i ++){
-                console.log(players[i].name);
                 html += `<li>${players[i].name}  | ${players[i].score}pts</li>`;
             }
-                // $('#onlinePlayers').append(`
-                //     <li>
-                //         ${name}
-                //     </li>
-                // `);
+            
             $('#onlinePlayers')[0].innerHTML = html;
             
         });
@@ -408,7 +402,7 @@
             {
                 $('#msg').append(`<li>${name} ${msg}</li>`);
             }
-            else if(type == "OwnGuess")
+            else if(type == "SysMsg")
             {
                 $('#msg').append(`<li>${msg}</li>`);
             }
@@ -419,7 +413,7 @@
 
         con.on('PlayerJoined', game => {
             if(game.isFull){
-                con.invoke('Start', 0);
+                con.invoke('Start', 0, 1);
             }else{
                 $('.loading').text("Waiting for others to join");
             }
@@ -430,19 +424,14 @@
             $('#app').show();
         }
 
-        con.on('Start', function(game, conId, drawIndex) {
-            console.log('Noindex:' + drawIndex);
-            if(drawIndex > game.noPlayers){
-                alert('Game ends');
-                return;
-            }
+        con.on('Start', function(game, conId, drawIndex, currentRound) {
 
-            
             startTimer();
             $('#app').show();
             $('#waitText').hide();
             //$('#panel').show();
             console.log(game);
+            console.log('Noindex:' + drawIndex);
             for(var player in game.players) 
             {
                 var player = game.players[player];
@@ -451,8 +440,8 @@
                 {
                     // document.getElementById("drawingName").innerHTML = player.name + 'is drawing ';
                     $('#question')[0].innerHTML = player.name + ' is drawing ';
-                    $('#question')[0].append(game.question);
-                    //$('#question')[0].append(game.question.replace(/./g, '_ '));
+                    //$('#question')[0].append(game.question);
+                    $('#question')[0].append(game.question.replace(/./g, '_ '));
                 }
 
                 if(player.id == conId && player.isDrawing == true)
@@ -461,6 +450,7 @@
                     $('#waitText').show();
                     setTimeout(function(){ $('#loadState').hide(); }, 2000);
                     $('#panel').show();
+                    $('#question')[0].innerHTML = "You are drawing " + game.question;
 
                 }
                 else if(player.id == conId && player.isDrawing == false)
@@ -472,11 +462,19 @@
 
             }
             con.invoke('SendClear', gameId); //Clear canvas after each player's turn
+            $('#question')[0].append(`    | Round ${game.currentRound} of ${game.noRounds}`);
             drawIndex++;
             
             setTimeout(function(){
-                        con.invoke('Start', drawIndex);
+                        if(drawIndex == game.noPlayers){
+                            currentRound++;
+                        }
+                        con.invoke('Start', drawIndex, currentRound);
                      }, 15000); //Alowing users 60 seconds to draw then chg nxt player
+        });
+
+        con.on('NewRound', (game, drawIndex, currentRound) => {
+            con.invoke('Start', drawIndex, currentRound);
         });
 
 
@@ -494,7 +492,7 @@
             //$('#app').show();
         });
 
-        con.on("END", () => {
+        con.on("End", () => {
             //startTimer();
             //$('#app').show();
             alert('GameENDS!');
