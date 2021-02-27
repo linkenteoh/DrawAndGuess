@@ -3,6 +3,7 @@ using System.Timers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using System.Linq;
 
 
 namespace DrawAndGuess
@@ -12,22 +13,24 @@ namespace DrawAndGuess
     // Class: Player
     // ============================================================================================
         
-    public class Player
+    public class Player : IComparable<Player>
     {
-        private const int STEP = 1;
-        private const int FINISH = 100;
 
         public string Id { get; set; }
-        public string Icon { get; set; }
         public string Name { get; set; }
         public int Count { get; set; } = 0;
         public int Score { get; set; } = 0;
-        public bool IsWin => Count >= FINISH;
         public bool IsDrawing { get; set; } = false;
+        public bool IsCorrect { get; set; } = false;
+        public bool IsHost { get; set; } = false;
 
         public Player(string id, string name) => (Id, Name) = (id, name);
 
-        public void Run() => Count += STEP;
+
+        public int CompareTo(Player other)
+        {
+            return Score - other.Score;
+        }
     }
 
 
@@ -54,27 +57,21 @@ namespace DrawAndGuess
         public bool IsEmpty => Players == null;
         public bool IsFull  => Players.Count == noPlayers;
 
+        public Game(string id, string Name, int players ,int rounds, string password, string rType) => (Id, name, noPlayers, noRounds, pass, type) = (id, Name, players ,rounds, password, rType);
+        public Game(){
+
+        }
+
         public string AddPlayer(Player player)
         {
             Players.Add(player);
             if(Players.Count == noPlayers){
                 IsWaiting = false;
             }
-            // if (PlayerA == null)
-            // {
-            //     PlayerA = player;
-            //     IsWaiting = true;
-            //     return "A";
-            // }
-            // else if (PlayerB == null)
-            // {
-            //     PlayerB = player;
-            //     IsWaiting = false;
-            //     return "B";
-            // }
 
             return null;
         }
+
     }
 
     
@@ -133,12 +130,45 @@ namespace DrawAndGuess
             return pass;
         }
 
+        public async Task PlayAgain(Game game) 
+        {
+            string name   = Context.GetHttpContext().Request.Query["name"];
+            string gameId = Context.GetHttpContext().Request.Query["gameId"];
+
+            // Game newGame = games.Find(g => g.Id == game.Id);
+            // Player p = new Player(Context.ConnectionId, name);
+            // game.AddPlayer(p);
+            await GameConnected();
+
+            await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players);
+            await Clients.Group(gameId).SendAsync("PlayerJoined", game);
+        }
+
+        public async Task InvitePlayer(string conId)
+        {
+            string gameId = Context.GetHttpContext().Request.Query["gameId"];
+
+            await Clients.Client(conId).SendAsync("ReceiveNotification", gameId);
+        }
+
+        public async Task UpdateUsers(string name)
+        {
+            User user = new User(Context.ConnectionId, name);
+            users.Add(user);
+            await Clients.Caller.SendAsync("Check", Context.ConnectionId, user);
+        }
 
         public async Task Start(int drawIndex, int currentRound) // 1 , 2 
         {
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
             
             Game game = games.Find(g => g.Id == gameId);
+
+            foreach (var player in game.Players)
+            {
+                player.IsCorrect = false;
+            }
+
             game.currentRound = currentRound; //Game round 2 
             if (game == null)
             {
@@ -153,7 +183,17 @@ namespace DrawAndGuess
             {
                 if(game.IsEnd)
                 {
-                    await Clients.Caller.SendAsync("End");
+                    Game lastGame = new Game();
+                    lastGame = game;
+
+                    var Players = lastGame.Players.OrderByDescending(x=> x.Score).ToList();
+
+                    List<Player> players = new List<Player>();
+                    game.Players = players;
+                    game.IsWaiting = true;
+
+                    await Clients.Caller.SendAsync("End", Players, game);
+
                     return;
                 }else{
                     game.Players[drawIndex - 1].IsDrawing = false;
@@ -171,6 +211,7 @@ namespace DrawAndGuess
                     game.Players[drawIndex -1].IsDrawing = false;
                 }
                 await Clients.Caller.SendAsync("Start", game, Context.ConnectionId, drawIndex, game.currentRound);
+
             }
         }
 
@@ -182,11 +223,6 @@ namespace DrawAndGuess
         //     //Assign random question into specific game object
         //     game.question = questions[index];
         // }
-
-        public async Task SendDrawText(string id, int player)
-        {
-            await Clients.Client(id).SendAsync("DrawText", player);
-        }
 
         // ----------------------------------------------------------------------------------------
         // Drawings
@@ -226,6 +262,18 @@ namespace DrawAndGuess
         // ----------------------------------------------------------------------------------------
         // Connected
         // ----------------------------------------------------------------------------------------
+        public class User
+        {
+            public string conId { get; set; }
+            public string name { get; set; }
+            public User(string id, string username) => (conId, name) = (id, username);
+        }       
+
+
+        private static List<User> users = new List<User>()
+        {
+  
+        };
 
         public override async Task OnConnectedAsync()
         {
@@ -252,16 +300,20 @@ namespace DrawAndGuess
             string id     = Context.ConnectionId;
             string name   = Context.GetHttpContext().Request.Query["name"];
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
-            var username = new List<string>();
             await Groups.AddToGroupAsync(id, gameId);
 
             Game game = games.Find(g => g.Id == gameId);
+
             Player p = new Player(id, name);
+            if(game.Players.Count == 0)
+            {
+                p.IsHost = true;   
+            }
             game.AddPlayer(p);
         
        
-
-            await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players);
+            await Clients.Caller.SendAsync("OnlinePlayers", users);
+            await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players, p);
             await Clients.Group(gameId).SendAsync("PlayerJoined", game);
             await UpdateList();
         }
@@ -275,7 +327,7 @@ namespace DrawAndGuess
             count--;
             await Clients.All.SendAsync("UpdateCount", count);
             string page = Context.GetHttpContext().Request.Query["page"];
-
+            
             switch (page)
             {
                 case "list": ListDisconnected(); break;
@@ -287,6 +339,8 @@ namespace DrawAndGuess
 
         private void ListDisconnected()
         {
+            // User user = users.Find(u => u.conId == Context.ConnectionId);
+            // users.Remove(user);
             // Nothing
         }
 
@@ -297,6 +351,9 @@ namespace DrawAndGuess
             string gameId = Context.GetHttpContext().Request.Query["gameId"];
             Game game = games.Find(g => g.Id == gameId);
 
+            await Groups.RemoveFromGroupAsync(id, gameId);
+
+
             Player player = game.Players.Find(p => p.Id == id);
             game.Players.Remove(player);
             await Clients.Group(gameId).SendAsync("Left", name);
@@ -306,31 +363,6 @@ namespace DrawAndGuess
             }
 
             await UpdateList();
-
-
-            // Game game = games.Find(g => g.Id == gameId);
-            // if (game == null)
-            // {
-            //     await Clients.Caller.SendAsync("Reject");
-            //     return;
-            // }
-
-            // if (game.PlayerA?.Id == id)
-            // {
-            //     game.PlayerA = null;
-            //     await Clients.Group(gameId).SendAsync("Left", "A");
-            // }
-            // else if (game.PlayerB?.Id == id)
-            // {
-            //     game.PlayerB = null;
-            //     await Clients.Group(gameId).SendAsync("Left", "B");
-            // }
-
-            // if (game.IsEmpty)
-            // {
-            //     games.Remove(game);
-            //     await UpdateList();
-            // }
         }
 
         // ----------------------------------------------------------------------------------------
@@ -343,11 +375,13 @@ namespace DrawAndGuess
 
             string ans = game.question;
 
-            if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase) && !player.IsDrawing)
+            if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase) && !player.IsDrawing && !player.IsCorrect)
             {
                 await Clients.OthersInGroup(gameId).SendAsync("ReceiveText", name, "guessed correctly!" ,"Ans");
                 await Clients.Caller.SendAsync("ReceiveText", name, "You've guessed right! + 25pts", "SysMsg");
                 player.Score += 25;
+                player.IsCorrect = true;
+
                 await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players);
             }
             else if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase) && player.IsDrawing)
@@ -355,9 +389,9 @@ namespace DrawAndGuess
                 await Clients.Caller.SendAsync("ReceiveText", name, "You're not guessing.", "SysMsg");
 
             }
-            else
+            else if(!message.Equals(ans, StringComparison.InvariantCultureIgnoreCase))
             {
-                await Clients.Group(gameId).SendAsync("ReceiveText", name, message, "SysMsg");
+                await Clients.Group(gameId).SendAsync("ReceiveText", name, message, "NormalChat");
             }
          
   

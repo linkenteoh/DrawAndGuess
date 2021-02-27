@@ -80,18 +80,48 @@
                     
                 </ol>
             </div>
+            <br>
+            <div><button class="btn">Invite player</button></div>
+            <div class="onlinePlayers" style="border: 1px solid gray;">
+                <ul>
+                    <li>HEY</li>
+                    <li>HEY</li>
+                </ul>
+            </div>
         </div>
 
         <div class="canvas">
             <div class="canvas-header">
                <h2 id="question"></h2>
+               <div id="app" hidden></div>
             </div>
             <div class="canvas-body">
                 <canvas id="canvas" width="700" height="700">
                     
                 </canvas>
                 <div id="loadState">
-                    <div id="overlay" style="opacity: 0;"></div>
+                    <div id="overlay" style="opacity: 0; z-index: 2;"></div>
+                    <div id="hiddenBoard" style="z-index: 9; display: none;">
+                        <div class="scoreBoard">
+                            <h2>Scoreboard</h2><hr>
+                            <div class="playerRanks">
+                                <table class="playerRanks">
+                                    <thead>
+                                        <th>Player name</th>
+                                        <th>Scores</th>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                    <tfoot>
+                                        <td colspan="2">
+                                            <button class="btn" id="Replay">New game</button>
+                                        </td>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <div id="waitText"><p class="loading"></p></div>
                 </div>
 
@@ -131,7 +161,6 @@
 
                     <button id="download">💾</button>
                 </div>
-                <div id="app" hidden></div>
             </div>
             
         </div>
@@ -144,7 +173,7 @@
                 <p style="width: 120px;">Messages</p>
             </div>
             <div class="msgBar">
-                <div class="messages">
+                <div class="messages" style="height: 700px; overflow-y: auto; width: 200px;">
                     <ul id="msg">
                         
                     </ul>
@@ -374,7 +403,10 @@
         con.on('ReceiveImage', drawImage);
         con.on('ReceiveClear', clear);
 
-        con.on('UpdatePlayers', players => { //Call when user first join the room - to retrieve lists of players connected
+        con.on('UpdatePlayers', (players, p) => { //Call when user first join the room - to retrieve lists of players connected
+            
+            $('#msg').append(`<li>${p.name} has joined the room.</li>`);
+
             var html = "";
             for(let i = 0; i < players.length; i ++){
                 html += `<li>${players[i].name}  | ${players[i].score}pts</li>`;
@@ -387,6 +419,7 @@
 
         con.on('Left', name => { //Call when user left the room
             $('#onlinePlayers li:contains('+name+')').remove();
+            $('#msg').append(`<li>${name} has left the room.</li>`);
         });
 
         con.on('ReceiveText', (name, msg, type) => {
@@ -412,26 +445,24 @@
         con.on('Reject', () => location = 'index.html');
 
         con.on('PlayerJoined', game => {
+           // console.log(game);
             if(game.isFull){
-                con.invoke('Start', 0, 1);
+                $('#waitText').show();
+                $('.loading').text("Room is full! Game starting soon");
+                setTimeout(function(){ $('#waitText').hide(); }, 3000);
+                setTimeout(function(){ con.invoke('Start', 0, 1); }, 3000);
             }else{
                 $('.loading').text("Waiting for others to join");
             }
         });
 
-        function test(){
-            startTimer();
-            $('#app').show();
-        }
-
         con.on('Start', function(game, conId, drawIndex, currentRound) {
 
+            console.log(game);
             startTimer();
             $('#app').show();
             $('#waitText').hide();
             //$('#panel').show();
-            console.log(game);
-            console.log('Noindex:' + drawIndex);
             for(var player in game.players) 
             {
                 var player = game.players[player];
@@ -443,6 +474,10 @@
                     //$('#question')[0].append(game.question);
                     $('#question')[0].append(game.question.replace(/./g, '_ '));
                 }
+                if(player.id == conId && player.isDrawing == true)
+                {
+                    var playerName = player.name;
+                }
 
                 if(player.id == conId && player.isDrawing == true)
                 {
@@ -451,10 +486,12 @@
                     setTimeout(function(){ $('#loadState').hide(); }, 2000);
                     $('#panel').show();
                     $('#question')[0].innerHTML = "You are drawing " + game.question;
-
                 }
                 else if(player.id == conId && player.isDrawing == false)
                 {
+                    $('#waitText').show();
+                    $('.loading').text("You may start guessing now");
+                    setTimeout(function(){ $('#waitText').hide(); }, 2000);
                     $('#loadState').show();
                     $('#panel').hide();
 
@@ -477,31 +514,73 @@
             con.invoke('Start', drawIndex, currentRound);
         });
 
-
-        con.on('DrawText', (player) => {
-            player++;
-            $('.loading').text("You are drawing!");
-            $('#waitText').show();
-            setTimeout(function(){ $('#loadState').hide(); }, 2000);
-            $('#panel').show();            
-            setTimeout(function(){ con.invoke('Start', player);$('#loadState').show(); $('#panel').hide }, 15000);
-        });
-
         con.on("StartTimer", () => {
             //startTimer();
             //$('#app').show();
         });
 
-        con.on("End", () => {
-            //startTimer();
-            //$('#app').show();
-            alert('GameENDS!');
+        con.on("End", (Players, game) => {
+            var html = '';
+
+            for(var player in Players) 
+            {
+                var player = Players[player];
+                html += `
+                    <tr>
+                            <td>
+                                ${player.name}
+                            </td>
+                            <td>
+                                ${player.score}
+                            </td>
+                        </tr>
+                `;
+            }
+            $('.playerRanks tbody')[0].innerHTML = html;
+            $('#hiddenBoard').show();
+            $('#overlay').css('opacity', 0.2);
+            $('#waitText').hide();
+            $('#loadState').show();
+            $('#app').hide();
+            $('#panel').hide();
+            $('#question')[0].innerHTML = "Game ended";
+            clear();
+
+            $('#Replay').click(async e => {
+                newGame(game);
+            });
+            return;
         })
 
+        function newGame(game)
+        {
+            $('#overlay').css('opacity', 0);
+            $('#hiddenBoard').hide();
+            //console.log(game);
+            con.invoke("PlayAgain", game);
+        }
 
+        con.on('OnlinePlayers', (users) => {
+            console.log(users);
+            var html = '';
+            for(var user in users)
+            {
+                var user = users[user];
+                html += `
+                    <li class="invUser" data-invite="${user.conId}">${user.name}</li>
+                `;
+            }
+            $('.onlinePlayers ul')[0].innerHTML = html; 
+        })
+    
         con.start().then(() => {
             $('main').show();
         });
+
+        $('.onlinePlayers ul').on('click', '[data-invite]', e => {
+            let conId = $(e.target).data('invite');
+            con.invoke('InvitePlayer', conId);
+        })
         
     </script>
 </body>

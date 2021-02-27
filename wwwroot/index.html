@@ -81,6 +81,8 @@
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
                 </select>
 
                 <label for="noRounds"><strong>No of rounds</strong></label>
@@ -111,6 +113,10 @@
             </form>
            </div>
         </div>
+      </div>
+
+      <div id="invitation">
+
       </div>
   
 
@@ -210,6 +216,7 @@
                 sessionStorage.setItem('username', name);
                 $('#username').text(name);
                 $('#log').hide();
+                con.invoke('UpdateUsers', name);
             }
             else
             {
@@ -279,6 +286,28 @@
             let roomPlayers = $('#noPlayers').val();
             let rounds = $('#noRounds').val();
 
+            if(roomName == ""){
+                alert("Please enter a room name");
+                return;
+            }
+
+            if(roomType == "Private"){
+                if(roomPass == ""){
+                    alert("Please enter a room password");
+                    return;
+                }
+            }
+
+            if(roomName == ""){
+                alert("Please enter a room name");
+                return;
+            }
+
+            if(rounds == ""){
+                alert("Please enter number of rounds");
+                return;
+            }
+
             rounds *= 1;
             roomPlayers *= 1;
         
@@ -304,7 +333,7 @@
         con.on('UpdateCount', count => {
             $('#count').text(count);
         });
-
+        
         con.on('UpdateList', list => {
             let publicHtml = '';
             let privateHtml = '';
@@ -315,7 +344,7 @@
                 {
                     fullHtml += `
                     <tr>
-                        <td>Some room details here |</td>
+                        <td>${game.name}|${game.type}|${game.noPlayers}|</td>
                     </tr>
                     `;
                 }
@@ -362,9 +391,28 @@
             $('#fullRoom').html(fullHtml);
         });
 
+        con.on("ReceiveNotification", (gameId) => {
+            alert(gameId);
+            $('#invModal').css('display', 'block');
+
+            html = `
+                <div>
+                <button class="btn-join" data-join="${game.id}">Join</button>
+                </div>
+            `;
+
+
+            document.getElementById("invitation").innerHTML = html;
+
+            $('#invitation').html(gameId);
+
+            
+        });
+
         con.start().then(main);
 
         function main() {
+
             $('#createRoom, #quickPlay').prop('disabled', false);
         }
 
