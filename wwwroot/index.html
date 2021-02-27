@@ -115,9 +115,24 @@
         </div>
       </div>
 
-      <div id="invitation">
+      <div id="invModal" class="modal">
 
+        <!-- Modal content -->
+       <div class="modal-content">
+           <div class="modal-header">
+               <span id="invClose" class="close">&times;</span>
+               <h2>Room Invitation</h2>
+           </div>
+
+           <div class="modal-body">
+            <div id="invitation">
+                No invites.
+              </div>
+           </div>
+        </div>
       </div>
+
+      
   
 
       <!--Room lists-->
@@ -163,6 +178,7 @@
         // Get the modal
         var modal = document.getElementById("myModal");
         var passModal = document.getElementById("passModal");
+        var invModal = document.getElementById("invModal");
         
         // Get the button that opens the modal
         var btn = document.getElementById("createRoom");
@@ -170,6 +186,7 @@
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
         var span2 = document.getElementById("passClose");
+        var span3 = document.getElementById("invClose");
         
         // When the user clicks the button, open the modal 
         btn.onclick = function() {
@@ -185,12 +202,18 @@
             passModal.style.display ="none";
         }
 
+        span3.onclick = function(){
+            invModal.style.display ="none";
+        }
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
           if (event.target == modal) {
             modal.style.display = "none";
           }else if(event.target == passModal){
               passModal.style.display = "none";
+          }else if(event.target == invModal){
+              invModal.style.display = "none";
           }
         }
     </script>
@@ -395,18 +418,34 @@
             alert(gameId);
             $('#invModal').css('display', 'block');
 
-            html = `
-                <div>
-                <button class="btn-join" data-join="${game.id}">Join</button>
-                </div>
-            `;
 
-
-            document.getElementById("invitation").innerHTML = html;
-
-            $('#invitation').html(gameId);
-
+            $('#invitation')[0].innerHTML = "<h3>You've been invited to this game!</h3> Click the button to join<br><button class='btn-join' data-join=" + gameId +">Join</button><br>";
             
+        });
+
+        $('#invitation').on('click', '[data-join]', async e => {
+            let gameId = $(e.target).data('join');
+            let roomPass = await con.invoke('getRoomPass', gameId); //Get room password if it's private room, "" will be returned if its public type of room
+            if(roomPass != "") //Room is private
+            {  
+                $('#passModal').css('display', 'block');
+            }
+            else
+            {
+                location = `game.html?gameId=${gameId}`;
+            }
+            $('#joinPrivRoom').click(e => {
+                e.preventDefault();
+                if($('#passInput').val().trim() == roomPass)
+                {
+                    location = `game.html?gameId=${gameId}`;
+                }
+                else //Wrong password entered
+                {
+                    alert('Wrong password! Please enter again!')
+                }
+            
+            });
         });
 
         con.start().then(main);
