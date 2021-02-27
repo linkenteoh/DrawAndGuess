@@ -105,6 +105,18 @@ namespace DrawAndGuess
 
         private static string[] questions = {"Cat", "Dog", "Fish", "Water", "Apple", "Goldfish", "Crocodile"};
 
+        public List<Game> RetrieveGames()
+        {
+            List<Game> PublicList = new List<Game>();
+            foreach (var game in games)
+            {
+                if(game.type == "Public" && game.IsWaiting)
+                {
+                    PublicList.Add(game);
+                }
+            }
+            return PublicList;
+        }
 
         public string Create(string roomName, string roomType, string roomPass, int roomPlayers, int rounds)
         {
@@ -138,11 +150,27 @@ namespace DrawAndGuess
             // Game newGame = games.Find(g => g.Id == game.Id);
             // Player p = new Player(Context.ConnectionId, name);
             // game.AddPlayer(p);
-            await GameConnected();
 
-            await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players);
-            await Clients.Group(gameId).SendAsync("PlayerJoined", game);
+            Game newGame = new Game();
+            newGame.IsWaiting = true;
+            newGame.name = game.name;
+            newGame.noPlayers = game.noPlayers;
+            newGame.noRounds = game.noRounds;
+            newGame.pass = game.pass;
+            newGame.Players = new List<Player>();
+            //newGame.// AddPlayer(new Player(Context.ConnectionId, name)),
+            newGame.type = game.type;
+
+            games.Add(newGame);
+            await Clients.Caller.SendAsync("NewGame", newGame.Id);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId);
+            await Clients.Group(gameId).SendAsync("JoinNewGame", newGame.Id);
+
+            games.Remove(game);
+            await UpdateList();
         }
+
+        
 
         public async Task InvitePlayer(string conId)
         {
@@ -154,8 +182,8 @@ namespace DrawAndGuess
         public async Task UpdateUsers(string name)
         {
             User user = new User(Context.ConnectionId, name);
-            users.Add(user);
-            await Clients.Caller.SendAsync("Check", Context.ConnectionId, user);
+            users.Add(user);           
+            await Clients.All.SendAsync("OnlinePlayers", users);
         }
 
         public async Task Start(int drawIndex, int currentRound) // 1 , 2 
@@ -164,6 +192,7 @@ namespace DrawAndGuess
             
             Game game = games.Find(g => g.Id == gameId);
 
+            //
             foreach (var player in game.Players)
             {
                 player.IsCorrect = false;
@@ -176,6 +205,9 @@ namespace DrawAndGuess
                 return;
             }
 
+            await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players, null);
+
+
             //await AssignQues(game, drawIndex);
             game.question = questions[drawIndex];
             
@@ -183,16 +215,17 @@ namespace DrawAndGuess
             {
                 if(game.IsEnd)
                 {
-                    Game lastGame = new Game();
-                    lastGame = game;
+                    game.Players = game.Players.OrderByDescending(x=> x.Score).ToList();
 
-                    var Players = lastGame.Players.OrderByDescending(x=> x.Score).ToList();
+                    await Clients.Caller.SendAsync("End", game);
+                    Player host = game.Players.Find(p => p.IsHost == true);
 
-                    List<Player> players = new List<Player>();
-                    game.Players = players;
-                    game.IsWaiting = true;
+                    if(Context.ConnectionId == host.Id) // Host will be called this method only.
+                    {
+                        await Clients.Caller.SendAsync("EnableReplay");
+                        await Clients.Others.SendAsync("WaitingReplay");
+                    }
 
-                    await Clients.Caller.SendAsync("End", Players, game);
 
                     return;
                 }else{
@@ -257,6 +290,8 @@ namespace DrawAndGuess
             {
                 await Clients.Client(id).SendAsync("UpdateList", list);
             }
+
+            await Clients.All.SendAsync("OnlinePlayers", users);
         }
 
         // ----------------------------------------------------------------------------------------
@@ -303,6 +338,10 @@ namespace DrawAndGuess
             await Groups.AddToGroupAsync(id, gameId);
 
             Game game = games.Find(g => g.Id == gameId);
+            if(game == null)
+            {
+                await Clients.Caller.SendAsync("YEST");
+            }
 
             Player p = new Player(id, name);
             if(game.Players.Count == 0)
@@ -312,7 +351,7 @@ namespace DrawAndGuess
             game.AddPlayer(p);
         
        
-            await Clients.Caller.SendAsync("OnlinePlayers", users);
+            // await Clients.Caller.SendAsync("OnlinePlayers", users);
             await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players, p);
             await Clients.Group(gameId).SendAsync("PlayerJoined", game);
             await UpdateList();
@@ -337,11 +376,11 @@ namespace DrawAndGuess
             await base.OnDisconnectedAsync(exception);
         }
 
-        private void ListDisconnected()
+        private async void ListDisconnected()
         {
-            // User user = users.Find(u => u.conId == Context.ConnectionId);
-            // users.Remove(user);
-            // Nothing
+            User user = users.Find(u => u.conId == Context.ConnectionId);
+            users.Remove(user);
+            await Clients.All.SendAsync("OnlinePlayers", users);
         }
 
         private async Task GameDisconnected()
@@ -382,7 +421,7 @@ namespace DrawAndGuess
                 player.Score += 25;
                 player.IsCorrect = true;
 
-                await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players);
+                await Clients.Group(gameId).SendAsync("UpdatePlayers", game.Players, null);
             }
             else if(message.Equals(ans, StringComparison.InvariantCultureIgnoreCase) && player.IsDrawing)
             {

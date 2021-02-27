@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=520, initial-scale=1.0">
-    <title>DrawRT 3.0</title>
+    <title>Drawlah</title>
     <link href="image/favicon.png" rel="shortcut icon">
     <link href="css/app.css" rel="stylesheet">
+	<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+    <link href="css/emoji.css" rel="stylesheet">
     <style>
         main{
             margin: 0px auto;
@@ -70,8 +72,7 @@
     <!-- TODO: Hide <main> section by default -->
     <main hidden style="padding-top: 0px;">
             
-
-        <div class="board">
+        <div class="board" style="width: 150px;">
             <div class="board-header">
                 <p>Players </p>
             </div>
@@ -81,15 +82,15 @@
                 </ol>
             </div>
             <br>
-            <div><button class="btn">Invite player</button></div>
-            <div class="onlinePlayers" style="border: 1px solid gray;">
+            <div><button id="inviteBtn" class="btn" style="width: 150px;">Invite player</button></div>
+            <div class="onlinePlayers" style="border: 1px solid rgb(231, 231, 231); display: none;">
                 <ul>
-                    <li>HEY</li>
-                    <li>HEY</li>
+                    
                 </ul>
             </div>
         </div>
 
+    <div style="display: flex;">
         <div class="canvas">
             <div class="canvas-header">
                <h2 id="question"></h2>
@@ -115,7 +116,7 @@
                                     </tbody>
                                     <tfoot>
                                         <td colspan="2">
-                                            <button class="btn" id="Replay">New game</button>
+                                            <button style="display:none" class="btn" id="Replay">New game</button>
                                         </td>
                                     </tfoot>
                                 </table>
@@ -168,12 +169,12 @@
             <source src="10-Second-Countdown-Beeping-Tones-www.fesliyanstudios.com.mp3"/>
           </audio>
 
-        <div class="chat">
+        <div class="chat" style="height: 500px;">
             <div class="board-header">
                 <p style="width: 120px;">Messages</p>
             </div>
             <div class="msgBar">
-                <div class="messages" style="height: 700px; overflow-y: auto; width: 200px;">
+                <div class="messages" style="height: 685px; overflow-y: auto; width: 200px;">
                     <ul id="msg">
                         
                     </ul>
@@ -181,18 +182,84 @@
                 <hr style="margin: 0px;">
                 <div id="chatbox">
                     <form id="chatForm">
-                        <input id="chatInput" placeholder="Guess and Chat" style="border: 0px;" autocomplete="off">
+                        <!-- <input id="chatInput" placeholder="Guess and Chat" style="border: 0px;" autocomplete="off"> -->
+                        <div class="chat-inp">
+                            <div id="chatInput" class="input" contenteditable="true"></div>
+                            <div class="emoji"></div>
+                                <!-- <input type="text" contenteditable="true" class="input"> -->
+                        </div>
                     </form>
+                    <div class="emoji-dashboard">
+                        <ul class="emojis">
+                            <li class="emoji" data-clipboard-text="--1"><i class="em em---1"></i></li>
+                            <li class="emoji" data-clipboard-text="-1"><i class="em em--1"></i></li>
+                            <li class="emoji" data-clipboard-text="100"><i class="em em-100"></i></li>
+                            <li class="emoji" data-clipboard-text="1234"><i class="em em-1234"></i></li>
+                            <li class="emoji" data-clipboard-text="8ball"><i class="em em-8ball"></i></li>
+                            <li class="emoji" data-clipboard-text="a"><i class="em em-a"></i></li>
+                            <li class="emoji" data-clipboard-text="ab"><i class="em em-ab"></i></li>
+                            <li class="emoji" data-clipboard-text="abc"><i class="em em-abc"></i></li>
+                            <li class="emoji" data-clipboard-text="abcd"><i class="em em-abcd"></i></li>
+                            <li class="emoji" data-clipboard-text="accept"><i class="em em-accept"></i></li>
+                            <li class="emoji" data-clipboard-text="aerial_tramway"><i class="em em-aerial_tramway"></i></li>
+                            <li class="emoji" data-clipboard-text="airplane"><i class="em em-airplane"></i></li>
+                            <li class="emoji" data-clipboard-text="alarm_clock"><i class="em em-alarm_clock"></i></li>
+                            <li class="emoji" data-clipboard-text="alien"><i class="em em-alien"></i></li>
+                            <li class="emoji" data-clipboard-text="ambulance"><i class="em em-ambulance"></i></li>
+                            <li class="emoji" data-clipboard-text="anchor"><i class="em em-anchor"></i></li>
+                            <li class="emoji" data-clipboard-text="angel"><i class="em em-angel"></i></li>
+                            <li class="emoji" data-clipboard-text="anger"><i class="em em-anger"></i></li>
+                            <li class="emoji" data-clipboard-text="angry"><i class="em em-angry"></i></li>
+                            <li class="emoji" data-clipboard-text="anguished"><i class="em em-anguished"></i></li>
+                            <li class="emoji" data-clipboard-text="ant"><i class="em em-ant"></i></li>
+                            <li class="emoji" data-clipboard-text="apple"><i class="em em-apple"></i></li>
+                            <li class="emoji" data-clipboard-text="aquarius"><i class="em em-aquarius"></i></li>
+                            <li class="emoji" data-clipboard-text="aries"><i class="em em-aries"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_backward"><i class="em em-arrow_backward"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_double_down"><i class="em em-arrow_double_down"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_double_up"><i class="em em-arrow_double_up"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_down"><i class="em em-arrow_down"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_down_small"><i class="em em-arrow_down_small"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_forward"><i class="em em-arrow_forward"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_heading_down"><i class="em em-arrow_heading_down"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_heading_up"><i class="em em-arrow_heading_up"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_left"><i class="em em-arrow_left"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_lower_left"><i class="em em-arrow_lower_left"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_lower_right"><i class="em em-arrow_lower_right"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_right"><i class="em em-arrow_right"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_right_hook"><i class="em em-arrow_right_hook"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_up"><i class="em em-arrow_up"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_up_down"><i class="em em-arrow_up_down"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_up_small"><i class="em em-arrow_up_small"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_upper_left"><i class="em em-arrow_upper_left"></i></li>
+                            <li class="emoji" data-clipboard-text="arrow_upper_right"><i class="em em-arrow_upper_right"></i></li>
+                            <li class="emoji" data-clipboard-text="arrows_clockwise"><i class="em em-arrows_clockwise"></i></li>
+                            <li class="emoji" data-clipboard-text="arrows_counterclockwise"><i class="em em-arrows_counterclockwise"></i></li>
+                            <li class="emoji" data-clipboard-text="art"><i class="em em-art"></i></li>
+                            <li class="emoji" data-clipboard-text="articulated_lorry"><i class="em em-articulated_lorry"></i></li>
+                            <li class="emoji" data-clipboard-text="astonished"><i class="em em-astonished"></i></li>
+                            <li class="emoji" data-clipboard-text="atm"><i class="em em-atm"></i></li>
+                            <li class="emoji" data-clipboard-text="b"><i class="em em-b"></i></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+
+        
 
         
     </main>
 
     <script src="js/timer.js"></script>
-    <script src="js/jquery.slim.js"></script>
+    <!-- <script src="js/jquery.slim.js"></script>
+    <script src="js/signalr.js"></script> -->
     <script src="js/signalr.js"></script>
+    <script  src="https://code.jquery.com/jquery-3.1.1.min.js"  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="  crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" ></script>
+    <script src="https://use.fontawesome.com/aa95071b26.js"></script>
     <script>
         // (1) Interactive UI Events ==============================================================
         $('#size').on('input', e => { 
@@ -253,14 +320,61 @@
             throw 'ERROR: Invalid username';
         }
 
+
+        //Invites
+        $('#inviteBtn').click(e => {
+            var x = $('.onlinePlayers')[0];
+                if (x.style.display === "none") {
+                    x.style.display = "block";
+                } else {
+                    x.style.display = "none";
+                }
+        });
+
+        //EmojiSupport
+
+		$('.chat-inp .emoji').click(function(){
+			$('.emoji-dashboard').slideToggle('fast');
+		});
+
+		$(document).click(function(){
+			$(".emoji-dashboard").slideUp('fast');
+		});
+        
+		$(".chat-header .menu ul.list,.chat-inp .emoji").click(function(e){
+			e.stopPropagation();
+		});
+
+		$('.emoji-dashboard li .em').click(function(){
+			var emo = $(this).css('background-image').split('"')[1];
+			$('.chat-inp .input').find('div').remove();
+			$('.chat-inp .input').append('<img src="'+emo+'">');
+			$(".emoji-dashboard").slideUp('fast');
+
+		});
+
         //Chat functions 
         $('#chatForm').submit(e => {
             e.preventDefault();
-            let msg = $('#chatInput').val().trim();
+            let msg = $('#chatInput')[0].innerHTML;
             if(msg){
                 con.invoke('SendText', gameId, msg, name);
             }
-            $('#chatInput').val('');
+            
+        });
+
+        $(function(){
+            $("#chatInput").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    $('#chatForm').submit();
+                    $(this).empty();
+                    $('#chatInput').focus();
+                }
+            });
+
+            $("#chatInput").keyup(function(){
+                $('.chat-inp .input').find('div').remove();
+            });
         });
 
         ctx.lineCap    = 'round';
@@ -383,6 +497,11 @@
             a.click();
         });
 
+        $('.playerRanks tfoot').on('click', '[data-join]', async e => {
+            let gameId = $(e.target).data('join');
+            location = `game.html?gameId=${gameId}`;
+        });
+
         // (4) SignalR ============================================================================
         const name = sessionStorage.getItem('username');
         const gameId = new URL(location).searchParams.get('gameId');
@@ -405,11 +524,21 @@
 
         con.on('UpdatePlayers', (players, p) => { //Call when user first join the room - to retrieve lists of players connected
             
-            $('#msg').append(`<li>${p.name} has joined the room.</li>`);
+            if(p!= null)
+            {
+                $('#msg').append(`<li><b>${p.name}</b> has joined the room.</li>`);
+            }
+
+            console.log(players);
 
             var html = "";
             for(let i = 0; i < players.length; i ++){
-                html += `<li>${players[i].name}  | ${players[i].score}pts</li>`;
+                if(players[i].isDrawing)
+                {
+                    html += `<li class="drawing">${players[i].name}  <span style="float:right">${players[i].score}</span></li>`;
+                }else{
+                    html += `<li>${players[i].name}  <span style="float:right">${players[i].score}</span></li>`;
+                }
             }
             
             $('#onlinePlayers')[0].innerHTML = html;
@@ -419,7 +548,7 @@
 
         con.on('Left', name => { //Call when user left the room
             $('#onlinePlayers li:contains('+name+')').remove();
-            $('#msg').append(`<li>${name} has left the room.</li>`);
+            $('#msg').append(`<li><b>${name}</b> has left the room.</li>`);
         });
 
         con.on('ReceiveText', (name, msg, type) => {
@@ -429,11 +558,11 @@
                 .split(':)').join('😊')
                 .split(':(').join('😥')
                 .split('<3').join('❤️');
-                $('#msg').append(`<li>${name}: ${msg}</li>`);
+                $('#msg').append(`<li><b>${name}</b>: ${msg}</li>`);
             }
             else if(type == "Ans")
             {
-                $('#msg').append(`<li>${name} ${msg}</li>`);
+                $('#msg').append(`<li><b>${name}</b> ${msg}</li>`);
             }
             else if(type == "SysMsg")
             {
@@ -447,6 +576,7 @@
         con.on('PlayerJoined', game => {
            // console.log(game);
             if(game.isFull){
+                $('#inviteBtn').hide();
                 $('#waitText').show();
                 $('.loading').text("Room is full! Game starting soon");
                 setTimeout(function(){ $('#waitText').hide(); }, 3000);
@@ -458,7 +588,6 @@
 
         con.on('Start', function(game, conId, drawIndex, currentRound) {
 
-            console.log(game);
             startTimer();
             $('#app').show();
             $('#waitText').hide();
@@ -514,17 +643,14 @@
             con.invoke('Start', drawIndex, currentRound);
         });
 
-        con.on("StartTimer", () => {
-            //startTimer();
-            //$('#app').show();
-        });
 
-        con.on("End", (Players, game) => {
+
+        con.on("End", (game) => {
             var html = '';
-
-            for(var player in Players) 
+            console.log(game);
+            for(var player in game.players) 
             {
-                var player = Players[player];
+                var player = game.players[player];
                 html += `
                     <tr>
                             <td>
@@ -547,28 +673,43 @@
             clear();
 
             $('#Replay').click(async e => {
-                newGame(game);
+                con.invoke("PlayAgain", game);
             });
-            return;
         })
 
-        function newGame(game)
-        {
-            $('#overlay').css('opacity', 0);
-            $('#hiddenBoard').hide();
-            //console.log(game);
-            con.invoke("PlayAgain", game);
-        }
+        con.on('EnableReplay', () => {
+            $('#Replay').show();
+        });
+
+        con.on('WaitingReplay', () => {
+            $('.playerRanks tfoot')[0].innerHTML = `
+                <td colspan="2">Waiting for host to start a new game</td>
+            `;
+        });
+
+        con.on('NewGame', async (gameId) => {
+            location = `game.html?gameId=${gameId}`;
+        });
+
+        con.on('JoinNewGame', (gameId) => {
+            $('.playerRanks tfoot')[0].innerHTML = `
+                <td colspan="2">Host started a new game! Join? <button class='btn-join' data-join=${gameId}>Join</button></td>
+            `;
+        });
 
         con.on('OnlinePlayers', (users) => {
-            console.log(users);
             var html = '';
             for(var user in users)
             {
                 var user = users[user];
                 html += `
-                    <li class="invUser" data-invite="${user.conId}">${user.name}</li>
+                    <li data-invite="${user.conId}">${user.name}</li>
                 `;
+            }
+
+            if(html == '')
+            {
+                html = "<li>No available users</li>"
             }
             $('.onlinePlayers ul')[0].innerHTML = html; 
         })

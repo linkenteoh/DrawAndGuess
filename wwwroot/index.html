@@ -143,7 +143,7 @@
                     <th>Public Rooms</th>
                 </tr>
             </thead>
-            <tbody id="publicRoom">
+            <tbody id="publicRoom" class="room">
                 <tr><td colspan="2">No game</td></tr>
             </tbody>
         </table>
@@ -154,7 +154,7 @@
                     <th>Private Rooms</th>
                 </tr>
             </thead>
-            <tbody id="privateRoom">
+            <tbody id="privateRoom" class="room">
                 <tr><td colspan="2">No game</td></tr>
             </tbody>
         </table>
@@ -165,7 +165,7 @@
                     <th>Full Rooms</th>
                 </tr>
             </thead>
-            <tbody id="fullRoom">
+            <tbody id="fullRoom" class="room">
                 <tr><td colspan="2">No game</td></tr>
             </tbody>
         </table>
@@ -268,9 +268,16 @@
             // //location = `game.html?gameId=${gameId}`;
         });
 
-        $('#quickPlay').click(e => {
-            alert('quickPlay');
+        $('#quickPlay').click(async e => {
+            var games = await con.invoke('RetrieveGames');
 
+            //Random generate numbers with a range of numbers of games exists
+            //Then redirect user to a random game (PUBLIC)
+            max = Math.floor(games.length - 1);
+            let randNumber =  Math.floor(Math.random() * (max + 1));
+            let randGameId = games[randNumber].id;
+
+            location = `game.html?gameId=${randGameId}`;
         });
 
         $('tbody').on('click', '[data-join]', async e => {
@@ -367,22 +374,22 @@
                 {
                     fullHtml += `
                     <tr>
-                        <td>${game.name}|${game.type}|${game.noPlayers}|</td>
+                        <td><button class="btn-full" style="float:right; height:50px;" type="button">FULL</button><h2>${game.name}</h2> <small>Players: ${game.players.length}/${game.noPlayers}</small></td>
                     </tr>
                     `;
                 }
                 else
                 {
-                    if(game.type == 'Public'){
+                    if(game.type == 'Public' && !game.isEnd){
                         publicHtml += `
                         <tr>
-                            <td>${game.name}|${game.type}|${game.noPlayers}|<button class="btn-join" style="float:right;" data-join="${game.id}">Join</button></td>
+                            <td><button class="btn-join" style="float:right; height:50px;" data-join="${game.id}">Join</button><h2>${game.name}</h2> <small>Players: ${game.players.length}/${game.noPlayers}</small></td>
                         </tr>
                          `;
-                    }else if (game.type == 'Private'){
+                    }else if (game.type == 'Private' && !game.isEnd){
                         privateHtml += `
                         <tr>
-                            <td>${game.name}|${game.type}|${game.noPlayers}|<button class="btn-join" style="float:right;" data-join="${game.id}">Join</button></td>
+                            <td><button class="btn-join" style="float:right; height:50px;" data-join="${game.id}">Join</button><h2>${game.name}</h2> <small>Players: ${game.players.length}/${game.noPlayers}</small></td>
                         </tr>
                          `;
                     }
